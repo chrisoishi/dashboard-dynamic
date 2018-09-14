@@ -1,6 +1,7 @@
 Vue.component(
     'dash-layout-full', {
         props: {
+            index:null,
             card1: {
                 default: 'dash-card-add'
             }
@@ -12,7 +13,11 @@ Vue.component(
 </v-layout>`,
         methods: {
             empty: function () {
-                if (this.card1 == "") this.card1 = "dash-card-add";
+                if(this.index==app.dashs && this.index > 1){
+                    app.dashs--;
+                    app.page = app.dashs;
+                }
+                else this.card1 = "dash-card-add";
             }
         }
     },
@@ -96,7 +101,7 @@ Vue.component(
         },
         template: `<v-layout row wrap>
         <v-flex d-flex xs6>
-            <component :is="card1" :card="'card1'" :father='this'></component>
+            <component :is="card1" :card="'card1'" :father='this' ></component>
         </v-flex>
         <v-flex d-flex xs6>
             <component :is="card2" :card="'card2'" :father='this'></component>
@@ -127,6 +132,12 @@ Vue.component(
             <v-toolbar color="grey" dark>
                 <v-toolbar-title>Componente</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <v-btn icon @click="change('dash-layout-2x1')">
+                <v-icon>view_agenda</v-icon>
+            </v-btn>
+            <v-btn icon @click="change('dash-layout-1x2')" style="transform:rotate(90deg)">
+            <v-icon>view_agenda</v-icon>
+        </v-btn>
                 <v-btn icon @click='choices()'>
                     <v-icon>add_circle_outline</v-icon>
                 </v-btn>
@@ -189,7 +200,7 @@ Vue.component(
         </v-card-actions>
         <v-btn color="red" dark fab absolute small top right @click='remove()'>
         <v-icon>close</v-icon>
-    </v-btn>
+        </v-btn>
       </v-card>
 
      `,
@@ -225,16 +236,12 @@ Vue.component(
         },
         template: `
         <v-card>
-        <v-btn color="red" dark fab absolute small top right @click='remove()'>
-        <v-icon>close</v-icon>
-    </v-btn>
-    <v-carousel  style='max-height:300px'>
-    <v-carousel-item
-      v-for="(item,i) in items"
-      :key="i"
-      :src="item.src"
-    ></v-carousel-item>
-  </v-carousel>
+            <v-btn color="red" dark fab absolute small top right @click='remove()'>
+                <v-icon>close</v-icon>
+            </v-btn>
+            <v-carousel style='height:100%'>
+                <v-carousel-item v-for="(item,i) in items" :key="i" :src="item.src"></v-carousel-item>
+            </v-carousel>
         </v-card>
 
      `,
@@ -250,13 +257,20 @@ Vue.component(
 Vue.component(
     'dash-card-image', {
         props: [
-            'card', 'father'
+            'card', 'father','src'
         ],
         template: `
-        <v-card class='lala'>
+        <v-card style="background-image: url('https://picsum.photos/1280/720/?random')" class="extra-background-cover">
         <v-btn color="red" dark fab absolute small top right @click='remove()'>
-        <v-icon>close</v-icon>
-    </v-btn>
+            <v-icon>close</v-icon>
+        </v-btn>
+        <v-container>
+            <v-layout fill-height>
+                <v-flex xs12 align-end flexbox>
+                    <span class="headline white--text">Title Card</span>
+                </v-flex>
+            </v-layout>
+        </v-container>
     </v-card>
      `,
         methods: {
