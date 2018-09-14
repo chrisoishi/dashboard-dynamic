@@ -7,18 +7,12 @@
 </v-navigation-drawer>
 
 
-
-<v-toolbar color="primary" dark fixed app>
-    <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-    <v-toolbar-title>@yield('l-topbar-title')</v-toolbar-title>
-</v-toolbar>
-
 <v-content>
     @yield('l-content')
 </v-content>
 
 
-<v-footer color="primary">
+<v-footer height="50px" fixed :style="'background-color:transparent'">
     @yield('l-footer')
 </v-footer>
 @endsection
