@@ -1,0 +1,15 @@
+.extra-background-cover{
+background-position: center; /* Center the image */
+background-repeat: no-repeat;
+background-size: cover;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity .2s;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
