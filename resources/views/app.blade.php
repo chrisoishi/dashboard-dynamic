@@ -3,16 +3,25 @@
 @section('title','Dynamic Dashboard')
 
 @section('l-content')
+<!--
+   DASH
+-->
 <template v-for='i in dashs'>
-    <transition name="fade">
+    <v-fade-transition>
         <v-container fluid fill-height grid-list-md v-show='i == page'>
-            <component :is="'dash-layout-full'" :index='i'></component>
+            <dash-layout-full :index='i' v-if='!test' :preview='preview2'></dash-layout-full>
+            <v-layout row wrap v-else>
+                <v-flex d-flex xs12>
+                </v-flex>
+            </v-layout>
         </v-container>
-    </transition>
+    </v-fade-transition>
 </template>
 
-
-<v-dialog v-model="dialog_add_component" scrollable persistent :overlay="false" max-width="500px" transition="dialog-transition">
+<!--
+    DIALOG COMPONENTS
+-->
+<v-dialog v-model="dialog_add_component" scrollable :overlay="false" max-width="500px" transition="dialog-transition">
     <v-card>
         <v-toolbar color="primary" dark tabs>
             <h1>Adicionar cartões</h1>
@@ -43,13 +52,49 @@
         </v-card-actions>
 </v-dialog>
 
-<v-btn color='red' dark fab fixed bottom right @click='dashs++;page=dashs'>
-    <v-icon>add</v-icon>
-</v-btn>
+
+<v-dialog v-model='model_edit_card' scrollable :overlay="false" max-width="500px" transition="dialog-transition">
+    <v-card>
+        <v-toolbar color="primary" dark tabs>
+            <h1>Editar cartao</h1>
+        </v-toolbar>
+        <v-container grid-list-xs>
+        </v-container>
+        <v-divider></v-divider>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red" flat @click="dialog_add_component = false">
+                Fechar
+            </v-btn>
+        </v-card-actions>
+</v-dialog>
+
+<!--
+    NAVIGATION DASHS
+-->
+
+<v-speed-dial v-model="model_float_menu" bottom right fixed>
+    <v-btn slot="activator" fab dark color="secondary">
+        <v-icon>dashboard</v-icon>
+        <v-icon>close</v-icon>
+    </v-btn>
+
+    <v-btn color='red' dark fab @click='dashs++;page=dashs'>
+        <v-icon>add</v-icon>
+    </v-btn>
+    <v-btn color='blue' dark fab fab @click='page=2'>
+        <v-icon>settings</v-icon>
+    </v-btn>
+    <v-btn :color='preview_color' dark fab @click='preview2=!preview2'>
+        <v-icon>visibility</v-icon>
+    </v-btn>
+</v-speed-dial>
 
 @endsection
 
-
+<!--
+    MENU LATERAL
+-->
 @section('l-menu')
 
 @endsection
@@ -58,7 +103,9 @@
 @section('l-footer')
 <v-layout row wrap>
     <v-flex xs12 text-xs-center>
-        <v-pagination v-model='page' :length="dashs" circle></v-pagination>
+        <v-scale-transition>
+            <v-pagination v-model='page' :length="dashs" circle v-show='!preview2'></v-pagination>
+        </v-scale-transition>
     </v-flex>
 </v-layout>
 <div class="text-xs-center">
@@ -95,6 +142,7 @@ Vue
         },
         data() {
             return {
+                test: false,
                 model_tab_cards: {
                     model: 1,
                     tabs: [{
@@ -129,34 +177,25 @@ Vue
                         ]
                     }, ]
                 },
-
+                model_float_menu: false,
+                model_edit_card: false,
+                preview2: false,
                 dialog_add_component: false,
                 card_object: null,
                 page: 1,
-                screen: 0,
                 dashs: 1,
                 title: "Dashboard",
-                drawer: null,
-                menu_top: [],
-                lorem: `Lorem ipsum dolor sit amet, mel at clita quando. Te sit oratio vituperatoribus, nam ad ipsum posidonium mediocritatem, explicari dissentiunt cu mea. Repudiare disputationi vim in, mollis iriure nec cu, alienum argumentum ius ad. Pri eu justo aeque torquatos.`,
+                lmenu: false,
             }
         },
-        watch: {
-            page: function (val, oldVal) {
-                this.screen = val - 1;
-            },
-            screen: function (val, oldVal) {
-                this.page = val + 1;
-            },
+        computed: {
+            preview_color: function () {
+                if (this.preview2) return 'green';
+                return 'grey';
+            }
         },
         methods: {},
-        mounted() {
-            var self = this;
-            self.menu_top = [{
-                content: "sdgsd"
-            }, ];
-        }
+        mounted() {}
     });
-
 </script>
 @endsection
