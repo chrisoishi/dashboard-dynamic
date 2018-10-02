@@ -15,4 +15,5 @@ Route::get('/', function () {
     return view('app');
 });
 
-Route::get('/{id}', 'Vuetify@jsonMessage');
+Route::post('/save','Dashboard@save')->name("dashboard.save");
+Route::get('/load','Dashboard@load')->name("dashboard.load");
