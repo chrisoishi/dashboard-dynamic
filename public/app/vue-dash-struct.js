@@ -7,7 +7,8 @@ Vue.component(
                 default: 'dash-card-add'
             },
             preview: Boolean,
-            config: Object
+            config: Object,
+
         },
         template: `<v-layout row wrap >
     <v-flex d-flex xs12>
@@ -22,8 +23,11 @@ Vue.component(
             },
             empty: function () {
                 if (this.index == app.dashs && this.index > 1) {
+                    delete app.configs['dash'+app.dashs];
+                    app.save();
                     app.dashs--;
-                    app.page = app.dashs;
+                    app.configs.settings.page = app.dashs;
+
                 } else this.card1 = "dash-card-add";
             },
             setConfig: function (cfg) {
@@ -47,6 +51,9 @@ Vue.component(
             },
             card2: {
                 default: 'dash-card-add'
+            },
+            cascate: {
+                default: ""
             }
         },
         data: function () {
@@ -58,11 +65,11 @@ Vue.component(
             }
         },
         template: `<v-layout row wrap>
-        <v-flex d-flex xs6>
-        <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1'></component>
+        <v-flex d-flex xs12 md6>
+        <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1' :cascate='cascate+"1:"'></component>
         </v-flex>
-        <v-flex d-flex xs6>
-        <component :is="'dash-card'" :card="card2" :card_slot="'card2'" :father='this' :preview='preview' ref='card2'></component>
+        <v-flex d-flex xs12 md6>
+        <component :is="'dash-card'" :card="card2" :card_slot="'card2'" :father='this' :preview='preview' ref='card2' :cascate='cascate+"2:"'></component>
         </v-flex>
     </v-layout>`,
         methods: {
@@ -99,14 +106,17 @@ Vue.component(
             },
             card2: {
                 default: 'dash-card-add'
+            },
+            cascate: {
+                default: ""
             }
         },
         template: `<v-layout row wrap>
         <v-flex d-flex xs12>
-            <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1' :key='1'></component>
+            <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1' :key='1' :cascate='cascate+"1:"'></component>
         </v-flex>
         <v-flex d-flex xs12>
-            <component :is="'dash-card'" :card="card2" :card_slot="'card2'" :father='this' :preview='preview' ref='card2' :key='2'></component>
+            <component :is="'dash-card'" :card="card2" :card_slot="'card2'" :father='this' :preview='preview' ref='card2' :key='2' :cascate='cascate+"2:"'></component>
         </v-flex>
     </v-layout>`,
         data: function () {
@@ -151,7 +161,8 @@ Vue.component(
             card_slot: String,
             preview: Boolean,
             model_edit: Boolean,
-            rand: Number
+            rand: Number,
+            cascate:Number
         },
         computed: {
             preview2: function () {
@@ -166,7 +177,7 @@ Vue.component(
             }
         },
         template: `
-        // <component :is='card' :father='this' v-show='preview2' :preview='preview' ref='card'>
+        <component :is='card' :father='this' v-show='preview2' :preview='preview' ref='card' :cascate='cascate'>
         <template slot='edit'>
         <v-scale-transition>
             <v-speed-dial v-model="model_edit" absolute right direction='bottom' v-show='!preview' class='mt-2'>
@@ -237,7 +248,6 @@ Vue.component(
                 this.child = child;
             },
             save: function () {
-
                 this.setConfig(this.$refs.card.data);
             },
             setConfig: function (cfg) {
@@ -255,12 +265,13 @@ Vue.component(
     'dash-card-add', {
         props: {
             father: Object,
+            cascate:Number
         },
         template: `
         <v-fade-transition>
-        <v-card>
+        <v-card style='min-height:200px'>
             <v-toolbar color="grey" dark>
-                <v-toolbar-title>Componente</v-toolbar-title>
+                <v-toolbar-title>#{{cascate}}</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn icon v-on:click="father.change('dash-layout-2x1')">
                 <v-icon>view_agenda</v-icon>
@@ -277,5 +288,7 @@ Vue.component(
             </v-toolbar>
 
         </v-card></v-fade-transition>`,
-    }
+
+    },
+
 )

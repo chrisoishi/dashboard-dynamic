@@ -31,9 +31,10 @@ Vue.component(
 
             }
         },
-
+        computed:{
+        },
         template: `
-        <v-card :style="'background-image: url('+data.src.value+');'"class="extra-background-cover">
+        <v-card :style="'background-image: url('+data.src.value+');min-height:200px'"class="extra-background-cover">
         <slot name='edit'></slot>
         <v-container>
             <v-layout row wrap>
@@ -41,7 +42,7 @@ Vue.component(
                     <div :style="'font-size:'+data.title.size+'px;color:'+data.title.color">{{data.title.value}}</div>
                 </v-flex>
                 <v-flex d-flex xs12>
-                <div :style="'font-size:'+data.text.size+'px;color:'+data.text.color">{{data.text.value}}</div>
+                <div :style="'font-size:'+data.text.size+'px;color:'+data.text.color+';white-space: pre-line;'">{{data.text.value}}</div>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -112,7 +113,7 @@ Vue.component(
             }
         },
         template: `
-        <v-card>
+        <v-card style='min-height:200px'>
         <slot name='edit'></slot>
             <v-carousel style='height:100%'>
                 <v-carousel-item v-for="i in data.carrosel.size" :key="i" :src="data.carrosel.items[i-1].value" ref='carr'></v-carousel-item>

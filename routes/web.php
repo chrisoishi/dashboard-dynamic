@@ -12,8 +12,21 @@
 */
 
 Route::get('/', function () {
-    return view('app');
+    if(isset($_GET['id'])){
+        $id = $_GET['id'];
+        $connection = "true";
+    }
+    else{
+        if(!isset($_COOKIE['dash-dynamic-id'])){
+            $id = rand(10000,99999);
+            setcookie('dash-dynamic-id',$id);
+        }
+        else $id = $_COOKIE['dash-dynamic-id'];
+        $connection = "false";
+    }
+    return view('app',compact('id',$id,'connection',$connection));
 });
 
 Route::post('/save','Dashboard@save')->name("dashboard.save");
-Route::get('/load','Dashboard@load')->name("dashboard.load");
+Route::get('/load/{id}','Dashboard@load')->name("dashboard.load");
+Route::get('/connection/{id}','Dashboard@connection')->name("dashboard.connection");
