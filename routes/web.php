@@ -11,22 +11,25 @@
 |
 */
 
-Route::get('/', function () {
-    if(isset($_GET['id'])){
-        $id = $_GET['id'];
-        $connection = "true";
-    }
-    else{
-        if(!isset($_COOKIE['dash-dynamic-id'])){
-            $id = rand(10000,99999);
-            setcookie('dash-dynamic-id',$id);
-        }
-        else $id = $_COOKIE['dash-dynamic-id'];
-        $connection = "false";
-    }
-    return view('app',compact('id',$id,'connection',$connection));
-});
+Route::get('/','Dashboard@dashboard');
 
 Route::post('/save','Dashboard@save')->name("dashboard.save");
-Route::get('/load/{id}','Dashboard@load')->name("dashboard.load");
+Route::post('/saveDash','Dashboard@saveDash')->name("dashboard.saveDash");
+
+Route::get('/loadSavedDash','Dashboard@loadSavedDash')->name("dashboard.loadSavedDash");
+Route::get('/loadSavedDash/{id}-{saved}','Dashboard@loadSavedDash');
+
+Route::get('/load','Dashboard@load')->name("dashboard.load");
+Route::get('/load/{id}/{update}','Dashboard@load');
+
+Route::get('/meta','Dashboard@meta')->name("dashboard.metadash");
+Route::get('/meta/{id}','Dashboard@meta');
+
+Route::get('/listdash','Dashboard@listSavedDash')->name("dashboard.listdash");
+
 Route::get('/connection/{id}','Dashboard@connection')->name("dashboard.connection");
+Route::get('/json/{json}','Dashboard@json')->name("dashboard.json");
+
+Route::get('/survey/{connection}/{id}','Survey@answer');
+Route::get('/survey/data/{connection}/{id}','Survey@data');
+Route::post('/survey/compute','Survey@compute')->name('survey.compute');

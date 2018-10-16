@@ -23,19 +23,19 @@ Vue.component(
             },
             empty: function () {
                 if (this.index == app.dashs && this.index > 1) {
-                    delete app.configs['dash'+app.dashs];
+                    delete app.configs['dash' + app.dashs];
                     app.save();
                     app.dashs--;
-                    app.configs.settings.page = app.dashs;
+                    app.page = app.dashs;
 
                 } else this.card1 = "dash-card-add";
             },
             setConfig: function (cfg) {
-                this.$emit('save', {dash:this.index,cfg:cfg});
+                this.$emit('save', {
+                    dash: this.index,
+                    cfg: cfg
+                });
             },
-            teste: function () {
-                alert();
-            }
         }
     },
 
@@ -88,8 +88,8 @@ Vue.component(
             load: function (cfg) {
                 if (cfg != null) {
 
-                    this.$refs.card1.load(cfg.card1,this.$refs.card1);
-                    this.$refs.card2.load(cfg.card2,this.$refs.card2);
+                    this.$refs.card1.load(cfg.card1, this.$refs.card1);
+                    this.$refs.card2.load(cfg.card2, this.$refs.card2);
                 }
             }
         }
@@ -143,8 +143,8 @@ Vue.component(
             load: function (cfg) {
                 if (cfg != null) {
 
-                    this.$refs.card1.load(cfg.card1,this.$refs.card1);
-                    this.$refs.card2.load(cfg.card2,this.$refs.card2);
+                    this.$refs.card1.load(cfg.card1, this.$refs.card1);
+                    this.$refs.card2.load(cfg.card2, this.$refs.card2);
                 }
             }
         }
@@ -162,7 +162,8 @@ Vue.component(
             preview: Boolean,
             model_edit: Boolean,
             rand: Number,
-            cascate:Number
+            cascate: Number,
+            card_id: Number
         },
         computed: {
             preview2: function () {
@@ -180,7 +181,7 @@ Vue.component(
         <component :is='card' :father='this' v-show='preview2' :preview='preview' ref='card' :cascate='cascate'>
         <template slot='edit'>
         <v-scale-transition>
-            <v-speed-dial v-model="model_edit" absolute right direction='bottom' v-show='!preview' class='mt-2'>
+            <v-speed-dial v-model="model_edit" absolute right direction='left' v-show='!preview' class='mt-2'>
             <v-btn slot="activator" fab dark color="secondary" small>
                 <v-icon>edit</v-icon>
                 <v-icon>close</v-icon>
@@ -205,24 +206,37 @@ Vue.component(
                 app.card_object = this;
             },
             change: function (component) {
+                _this_card = this;
                 app.dialog_add_component = false;
                 this.card = component;
                 this.father[this.card_slot] = component;
+                if (this.card_id == null) {
+                    //this.card_id = Math.floor((Math.random() * 99999) + 100000);
+                    //alert("dsgds");
+                }
+
+                Vue.nextTick(function () {
+                    _this_card.save();
+                })
             },
-            load: function (cfg,card) {
+            load: function (cfg, card) {
+                if (!cfg.hasOwnProperty('id')) {
+                    cfg.id = Math.floor((Math.random() * 99999) + 100000);
+                }
                 if (cfg != null) {
                     _this = this;
-                    if(cfg.type == null)cfg.type='dash-card-add';
+                    if (cfg.type == null) cfg.type = 'dash-card-add';
                     this.change(cfg.type);
                     if (cfg.type.indexOf('layout') > -1) {
-                        Vue.nextTick(function(){
+                        Vue.nextTick(function () {
                             card.$refs.card.load(cfg.data);
                         });
                     } else {
                         if (cfg.data != null) {
-                            Vue.nextTick(function(){
-                            card.$refs.card.data = cfg.data;
-                            card.save();
+                            Vue.nextTick(function () {
+                                _this.card_id = cfg.id;
+                                card.$refs.card.data = cfg.data;
+                                card.save();
                             });
                         }
                     }
@@ -248,14 +262,27 @@ Vue.component(
                 this.child = child;
             },
             save: function () {
+                _this_card = this
+                if(this.$refs.card.hasOwnProperty('refresh'))this.$refs.card.refresh();
+                if (this.$refs.card.extras != null) {
+                    $.each(this.$refs.card.extras, function (attr, value) {
+                        app.addData(_this_card.card_id, attr, value);
+                    });
+                }
                 this.setConfig(this.$refs.card.data);
+
             },
             setConfig: function (cfg) {
+                if (this.card_id == null) this.card_id = Math.floor((Math.random() * 99999) + 100000);
                 this.father.setConfig({
                     type: this.card,
+                    id: this.card_id,
                     data: cfg
                 }, this.card_slot);
-            }
+
+
+
+            },
         },
     },
 )
@@ -265,7 +292,7 @@ Vue.component(
     'dash-card-add', {
         props: {
             father: Object,
-            cascate:Number
+            cascate: Number
         },
         template: `
         <v-fade-transition>
