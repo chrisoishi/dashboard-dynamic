@@ -36,6 +36,12 @@ Vue.component(
                     cfg: cfg
                 });
             },
+            start: function(){
+                this.$refs.card1.start();
+            },
+            end: function(){
+                this.$refs.card1.end();
+            }
         }
     },
 
@@ -84,6 +90,14 @@ Vue.component(
             setConfig: function (cfg, card) {
                 this.config[card] = cfg;
                 this.father.setConfig(this.config);
+            },
+            start: function(){
+                this.$refs.card1.start();
+                this.$refs.card2.start();
+            },
+            end: function(){
+                this.$refs.card1.end();
+                this.$refs.card2.end();
             },
             load: function (cfg) {
                 if (cfg != null) {
@@ -139,6 +153,14 @@ Vue.component(
             setConfig: function (cfg, card) {
                 this.config[card] = cfg;
                 this.father.setConfig(this.config);
+            },
+            start: function(){
+                this.$refs.card1.start();
+                this.$refs.card2.start();
+            },
+            end: function(){
+                this.$refs.card1.end();
+                this.$refs.card2.end();
             },
             load: function (cfg) {
                 if (cfg != null) {
@@ -220,10 +242,10 @@ Vue.component(
                 })
             },
             load: function (cfg, card) {
-                if (!cfg.hasOwnProperty('id')) {
-                    cfg.id = Math.floor((Math.random() * 99999) + 100000);
-                }
                 if (cfg != null) {
+                    if (!cfg.hasOwnProperty('id')) {
+                        cfg.id = Math.floor((Math.random() * 99999) + 100000);
+                    }
                     _this = this;
                     if (cfg.type == null) cfg.type = 'dash-card-add';
                     this.change(cfg.type);
@@ -263,7 +285,7 @@ Vue.component(
             },
             save: function () {
                 _this_card = this
-                if(this.$refs.card.hasOwnProperty('refresh'))this.$refs.card.refresh();
+                if (this.$refs.card.hasOwnProperty('refresh')) this.$refs.card.refresh();
                 if (this.$refs.card.extras != null) {
                     $.each(this.$refs.card.extras, function (attr, value) {
                         app.addData(_this_card.card_id, attr, value);
@@ -279,9 +301,12 @@ Vue.component(
                     id: this.card_id,
                     data: cfg
                 }, this.card_slot);
-
-
-
+            },
+            start: function(){
+                if (this.$refs.card.hasOwnProperty('start')) this.$refs.card.start();
+            },
+            end: function(){
+                if (this.$refs.card.hasOwnProperty('end')) this.$refs.card.end();
             },
         },
     },

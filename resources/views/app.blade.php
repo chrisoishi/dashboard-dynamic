@@ -11,6 +11,7 @@
    DASH
 -->
 
+
 <div style='position:absolute;width:100%;' class='ml-1 font-weight-bold text-xs-center'>ID # @{{connection_id}}</div>
 <div style='height:100%' v-show='connection'>
     <v-fade-transition v-for='i in dashs'>
@@ -19,6 +20,8 @@
         </v-container>
     </v-fade-transition>
 </div>
+
+
 
 <div style='height:100%' v-show='!connection'>
     <v-fade-transition>
@@ -286,6 +289,7 @@ Vue
 <script src="{{asset('app/vue-dash-form-components.js')}}"></script>
 <script src="{{asset('app/vue-dash-components.js')}}"></script>
 <script src="{{asset('app/plugins/swatches/vue-swatches.min.js')}}"></script>
+<script src="{{asset('app/plugins/video-youtube/iframe_api.js')}}"></script>
 <script>
     $.url = location.href.split('?')[0];
     Vue.component('swatches', window.VueSwatches.default);
@@ -337,6 +341,14 @@ Vue
                             {
                                 layout: 'dash-card-survey',
                                 content: 'Enquete',
+                            },
+                            {
+                                layout: 'dash-card-feed',
+                                content: 'Feed de notícia',
+                            },
+                            {
+                                layout: 'dash-card-video',
+                                content: 'Vídeo',
                             }
                         ]
                     }, ]
@@ -404,10 +416,12 @@ Vue
                     __this.running()
                 }, __this.configs.settings.preview_time * 1000);
             },
-            page: function () {
+            page: function (newV,oldV) {
                 if (!this.preview) {
                     this.save();
                 }
+                this.$refs.dash[newV-1].start();
+                this.$refs.dash[oldV-1].end();
             },
         },
         methods: {

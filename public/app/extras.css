@@ -24,6 +24,17 @@ transition:background-position 10s;
     position: absolute;
     z-index:0;
 }
+
+.extra-background-darkness-more{
+    background-color:black;
+    opacity: 0.75;
+    filter: blur(2px);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index:0;
+}
+
 .extra-birthday{
     background-color:rgba(0,0,0,0);
 }
@@ -34,3 +45,4 @@ transition:background-position 10s;
 .extra-swatches-trigger-border .vue-swatches__trigger{
     border:1px solid black
 }
+

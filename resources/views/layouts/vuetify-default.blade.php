@@ -13,6 +13,7 @@
 </head>
 
 <body>
+    <main>
     <div id="app">
         <v-app>
             <template>
@@ -20,6 +21,7 @@
             </template>
         </v-app>
     </div>
+</main>
     @yield("content")
     <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>
     <script src="{{asset('vuetify/vue.min.js')}}"></script>

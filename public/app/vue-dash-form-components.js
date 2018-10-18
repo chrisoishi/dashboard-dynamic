@@ -130,6 +130,7 @@ Vue.component(
                 if(this.value.align=='left')return 0;
                 if(this.value.align=='center')return 1;
                 if(this.value.align=='right')return 2;
+                if(this.value.align=='justify')return 3;
             }
         },
         template: `<v-layout row wrap>
@@ -152,6 +153,9 @@ Vue.component(
             <v-btn flat v-on:click='change("right","align")'>
                 <v-icon>format_align_right</v-icon>
             </v-btn>
+            <v-btn flat v-on:click='change("justify","align")'>
+            <v-icon>format_align_justify</v-icon>
+        </v-btn>
         </v-btn-toggle>
         </v-flex>
 
@@ -185,6 +189,7 @@ Vue.component(
                 if(this.value.align=='left')return 0;
                 if(this.value.align=='center')return 1;
                 if(this.value.align=='right')return 2;
+                if(this.value.align=='justify')return 3;
             }
         },
         template: `<v-layout row wrap>
@@ -207,6 +212,9 @@ Vue.component(
             <v-btn flat v-on:click='change("right","align")'>
                 <v-icon>format_align_right</v-icon>
             </v-btn>
+            <v-btn flat v-on:click='change("justify","align")'>
+            <v-icon>format_align_justify</v-icon>
+        </v-btn>
         </v-btn-toggle>
         </v-flex>
 
