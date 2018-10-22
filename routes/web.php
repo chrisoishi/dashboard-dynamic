@@ -13,8 +13,11 @@
 
 Route::get('/','Dashboard@dashboard');
 
+Route::post('/start','Dashboard@start')->name("dashboard.startconnection");
+
 Route::post('/save','Dashboard@save')->name("dashboard.save");
 Route::post('/saveDash','Dashboard@saveDash')->name("dashboard.saveDash");
+Route::post('/deleteDash','Dashboard@deleteDash')->name("dashboard.deleteDash");
 
 Route::get('/loadSavedDash','Dashboard@loadSavedDash')->name("dashboard.loadSavedDash");
 Route::get('/loadSavedDash/{id}-{saved}','Dashboard@loadSavedDash');

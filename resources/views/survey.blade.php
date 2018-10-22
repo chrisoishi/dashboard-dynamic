@@ -21,6 +21,7 @@
                                     <v-btn outline color="" dark style='width:70%' v-on:click='compute(i)'>@{{ans.value}}</v-btn>
                                 </v-flex>
                                 <v-flex xs12 class='text-xs-center' v-if='end'>
+                                        <v-btn outline color="" dark style='width:70%' v-on:click='window.close()'>Voltar</v-btn>
                                     </v-flex>
                             </v-layout>
 

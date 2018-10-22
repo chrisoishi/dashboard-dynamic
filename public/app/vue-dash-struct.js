@@ -12,7 +12,7 @@ Vue.component(
         },
         template: `<v-layout row wrap >
     <v-flex d-flex xs12>
-        <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1'></component>
+        <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1' cascate=''></component>
     </v-flex>
 </v-layout>`,
         methods: {
@@ -30,16 +30,18 @@ Vue.component(
 
                 } else this.card1 = "dash-card-add";
             },
-            setConfig: function (cfg) {
+            setConfig: function (cfg, card, onload) {
+                //alert(JSON.stringify(cfg));
                 this.$emit('save', {
                     dash: this.index,
-                    cfg: cfg
+                    cfg: cfg,
+                    onload: onload
                 });
             },
-            start: function(){
+            start: function () {
                 this.$refs.card1.start();
             },
-            end: function(){
+            end: function () {
                 this.$refs.card1.end();
             }
         }
@@ -87,21 +89,20 @@ Vue.component(
             empty: function () {
                 if (this.card1 == "" && this.card2 == "") this.father.remove();
             },
-            setConfig: function (cfg, card) {
+            setConfig: function (cfg, card, onload) {
                 this.config[card] = cfg;
-                this.father.setConfig(this.config);
+                this.father.setConfig(this.config, onload);
             },
-            start: function(){
+            start: function () {
                 this.$refs.card1.start();
                 this.$refs.card2.start();
             },
-            end: function(){
+            end: function () {
                 this.$refs.card1.end();
                 this.$refs.card2.end();
             },
             load: function (cfg) {
                 if (cfg != null) {
-
                     this.$refs.card1.load(cfg.card1, this.$refs.card1);
                     this.$refs.card2.load(cfg.card2, this.$refs.card2);
                 }
@@ -150,15 +151,16 @@ Vue.component(
             empty: function () {
                 if (this.card1 == "" && this.card2 == "") this.father.remove();
             },
-            setConfig: function (cfg, card) {
+            setConfig: function (cfg, card, onload) {
+
                 this.config[card] = cfg;
-                this.father.setConfig(this.config);
+                this.father.setConfig(this.config, onload);
             },
-            start: function(){
+            start: function () {
                 this.$refs.card1.start();
                 this.$refs.card2.start();
             },
-            end: function(){
+            end: function () {
                 this.$refs.card1.end();
                 this.$refs.card2.end();
             },
@@ -195,8 +197,7 @@ Vue.component(
         },
         watch: {
             card: function () {
-                //alert('data');
-                this.setConfig(null);
+                //this.setConfig(null);
             }
         },
         template: `
@@ -228,37 +229,38 @@ Vue.component(
                 app.card_object = this;
             },
             change: function (component) {
-                _this_card = this;
+                this.change_onload(component, false);
+            },
+            change_onload: function (component, onload) {
                 app.dialog_add_component = false;
                 this.card = component;
                 this.father[this.card_slot] = component;
-                if (this.card_id == null) {
-                    //this.card_id = Math.floor((Math.random() * 99999) + 100000);
-                    //alert("dsgds");
+                if (!onload) {
+                    Vue.nextTick(() => {
+                        this.save(onload);
+                    });
                 }
 
-                Vue.nextTick(function () {
-                    _this_card.save();
-                })
             },
             load: function (cfg, card) {
                 if (cfg != null) {
                     if (!cfg.hasOwnProperty('id')) {
                         cfg.id = Math.floor((Math.random() * 99999) + 100000);
                     }
-                    _this = this;
-                    if (cfg.type == null) cfg.type = 'dash-card-add';
-                    this.change(cfg.type);
+                    if (cfg.type == null) this.change_onload("dash-card-add", true);
+                    else this.change_onload(cfg.type, true);
+
                     if (cfg.type.indexOf('layout') > -1) {
                         Vue.nextTick(function () {
                             card.$refs.card.load(cfg.data);
                         });
                     } else {
                         if (cfg.data != null) {
-                            Vue.nextTick(function () {
-                                _this.card_id = cfg.id;
+                            Vue.nextTick(() => {
+                                this.card_id = cfg.id;
                                 card.$refs.card.data = cfg.data;
-                                card.save();
+                                this.save(true);
+                                if (this.$refs.card.hasOwnProperty('refresh')) this.$refs.card.refresh();
                             });
                         }
                     }
@@ -269,8 +271,7 @@ Vue.component(
                 if (this.card.indexOf('dash-card-add') > -1) {
                     this.father.remove(this.card_slot);
                 } else {
-                    this.card = "dash-card-add";
-                    this.father[this.card_slot] = "dash-card-add";
+                    this.change("dash-card-add")
                 }
 
             },
@@ -283,29 +284,27 @@ Vue.component(
             setChild: function (child) {
                 this.child = child;
             },
-            save: function () {
-                _this_card = this
-                if (this.$refs.card.hasOwnProperty('refresh')) this.$refs.card.refresh();
+            save: function (onload) {
                 if (this.$refs.card.extras != null) {
-                    $.each(this.$refs.card.extras, function (attr, value) {
-                        app.addData(_this_card.card_id, attr, value);
+                    $.each(this.$refs.card.extras, (attr, value) => {
+                        app.addData(this.card_id, attr, value);
                     });
                 }
-                this.setConfig(this.$refs.card.data);
+                this.setConfig(this.$refs.card.data, onload);
 
             },
-            setConfig: function (cfg) {
+            setConfig: function (cfg, onload) {
                 if (this.card_id == null) this.card_id = Math.floor((Math.random() * 99999) + 100000);
                 this.father.setConfig({
                     type: this.card,
                     id: this.card_id,
-                    data: cfg
-                }, this.card_slot);
+                    data: cfg,
+                }, this.card_slot, onload);
             },
-            start: function(){
+            start: function () {
                 if (this.$refs.card.hasOwnProperty('start')) this.$refs.card.start();
             },
-            end: function(){
+            end: function () {
                 if (this.$refs.card.hasOwnProperty('end')) this.$refs.card.end();
             },
         },
@@ -319,10 +318,16 @@ Vue.component(
             father: Object,
             cascate: Number
         },
+        computed:{
+            home: function(){
+                if(this.father.cascate=='')return true;
+                else return false;
+            }
+        },
         template: `
         <v-fade-transition>
         <v-card style='min-height:200px'>
-            <v-toolbar color="grey" dark>
+            <v-toolbar color="grey" dark style='position:absolute'>
                 <v-toolbar-title>#{{cascate}}</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn icon v-on:click="father.change('dash-layout-2x1')">
@@ -338,7 +343,13 @@ Vue.component(
                     <v-icon>close</v-icon>
                 </v-btn>
             </v-toolbar>
-
+        <v-container class='font-weight-bold caption' fill-height v-if='home'>
+        <div class='text-xs-center grey--text' style='width:100%'>
+            Clique em <v-icon>add_circle_outline</v-icon> para adicionar um novo card<br>
+            Clique em <v-icon>view_agenda</v-icon> para adicionar um layout 1x2<br>
+            Clique em <v-icon style="transform:rotate(90deg)">view_agenda</v-icon> para adicionar um layout 2x1<br>
+            </div>
+        </v-container>
         </v-card></v-fade-transition>`,
 
     },

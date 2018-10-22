@@ -7,10 +7,11 @@ Vue.component(
         data: function () {
             return {
                 data: {
-                    src: {
-                        type: 'dash-form-string',
-                        name: 'Link da imagem',
-                        color: "white",
+                    background: {
+                        type: 'dash-form-background',
+                        name: 'Imagem de fundo',
+                        color: "black",
+                        opacity: 0,
                         value: "https://picsum.photos/1270/720/?random"
                     },
                     title: {
@@ -36,10 +37,12 @@ Vue.component(
         },
         computed: {},
         template: `
-        <v-card :style="'background-image: url('+data.src.value+');min-height:200px'"class="extra-background-cover">
+        <v-card :style="'background-image: url('+data.background.value+');min-height:200px'"class="extra-background-cover">
         <slot name='edit'></slot>
-        <v-container>
-            <v-layout row wrap>
+        <div class='extra-background-card' :style="'background-color:'+data.background.color+';opacity:'+data.background.opacity/100"></div>
+        <div style='position:absolute;width:100%;height:100%'>
+        <v-container fill-height>
+            <v-layout row wrap fill-height>
                 <v-flex d-flex xs12 :class="'text-xs-'+data.title.align">
                     <div :style="'font-size:'+data.title.size+'px;color:'+data.title.color" class='font-weight-bold'>{{data.title.value}}</div>
                 </v-flex>
@@ -48,11 +51,12 @@ Vue.component(
                 </v-flex>
             </v-layout>
         </v-container>
+        </div>
     </v-card>
     `,
         methods: {},
         mounted: function () {
-            this.data.src.value += Math.floor((Math.random() * 100) + 1);
+            this.data.background.value += Math.floor((Math.random() * 100) + 1);
         }
     }
 )
@@ -217,10 +221,11 @@ Vue.component(
         data: function () {
             return {
                 data: {
-                    src: {
-                        type: 'dash-form-string',
-                        name: 'Link da imagem',
-                        color: "white",
+                    background: {
+                        type: 'dash-form-background',
+                        name: 'Imagem de fundo',
+                        color: "black",
+                        opacity: 70,
                         value: "https://picsum.photos/1270/720/?random"
                     },
                     title: {
@@ -245,6 +250,12 @@ Vue.component(
                         size_max: "6",
                         items: []
                     },
+                    options_size:{
+                        type: 'dash-form-slide',
+                        name: "Tamanho das respostas",
+                        size: "10",
+                        size_max: "50"
+                    }
                 },
                 survey: {},
                 colors: ['blue', 'purple', 'green', 'orange darken-4', 'red', 'brown darken-3'],
@@ -265,19 +276,23 @@ Vue.component(
                     choices.push(Math.floor((Math.random() * this.colors.length) + 0));
                 }
                 return choices;
+            },
+            url: function () {
+                return $.url + 'survey/' + app.connection_id + '/' + this.father.card_id;
             }
         },
         watch: {
-            "data.options.size": function (val) {
+            "data.options.size": function (val,oldval) {
+                if(val!=oldval)
                 for (i = 0; i < val; i++) {
                     this.survey[i] = 0;
                 }
             }
         },
         template: `
-        <v-card :style="'background-image: url('+data.src.value+');min-height:200px'" class="extra-background-cover">
+        <v-card :style="'background-image: url('+data.background.value+');min-height:200px'" class="extra-background-cover">
         <slot name='edit'></slot>
-        <div class='extra-background-darkness-more'></div>
+        <div class='extra-background-card' :style="'background-color:'+data.background.color+';opacity:'+data.background.opacity/100"></div>
         <div style='position:absolute;width:100%;height:100%'>
             <v-container fill-height>
                 <v-layout row wrap>
@@ -291,20 +306,22 @@ Vue.component(
                     <v-flex class='text-xs-center'>
                     <v-container fill-height>
                             <v-layout fill-height row wrap>
-                                <v-flex  d-flex md4 v-for='(ans,i) in data.options.items'>
+                                <v-flex  d-flex style='min-width:100px' v-for='(ans,i) in data.options.items'>
                                     <v-layout justify-space-between column fill-height>
-                                    <v-flex xs12 class='white--text'>{{ans.value}}</v-flex>
-                                    <v-flex xs12 class='white--text'>{{Math.round(survey[i]*100)/100}} % </v-flex>
-                                    <v-flex xs12><v-progress-linear height='15' :value='survey[i]' :color='colors[color_choice[i]]'></v-progress-linear></v-flex>
+                                    <v-flex xs12 class='white--text' :style="'font-size:'+data.options_size.size+'px'">{{ans.value}}</v-flex>
+                                    <v-flex xs12>
+                                    <p class='white--text' :style="'font-size:'+data.options_size.size*0.6+'px'">{{Math.round(survey[i]*100)/100}} % </p>
+                                    <v-progress-linear height='15' :value='survey[i]' :color='colors[color_choice[i]]'></v-progress-linear></v-flex>
                                     </v-layout>
                                 </v-flex>
                             </v-layout>
                             </v-container>
                     </v-flex>
-                    <v-flex class='text-xs-center' style='min-width:50px'>
+                    <v-flex class='text-xs-center' style='min-width:200px'>
                         <v-container fill-height>
-                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?data='+$.url+'survey/'+app.connection_id+'/'+father.card_id+'&size=500x500'"
-                                :style="'min-height:'+data.qr_size.size+'%;height:50px;display: block;margin-left: auto;margin-right: auto;'">
+                            <a @click="window.open(url)" style='width:100%;height:100%'>
+                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?data='+url+'&size=500x500'" :style="'min-height:'+data.qr_size.size+'%;height:50px;display: block;margin-left: auto;margin-right: auto;'">
+                            </a>
                         </v-container>
                     </v-flex>
                 </v-layout>
@@ -319,35 +336,35 @@ Vue.component(
                     url: $.url + 'survey/data/' + app.connection_id + '/' + this.father.card_id,
                     dataType: "JSON",
                     method: 'GET',
-                }).done(function (response) {
+                }).done((response) => {
                     sum = 0;
                     if (response != null) {
-                        for (i = 0; i < _this_survey.data.options.size; i++) {
+                        for (i = 0; i < this.data.options.size; i++) {
                             if (response.hasOwnProperty(i)) {
                                 sum += response[i];
                             }
                         }
-                        for (i = 0; i < _this_survey.data.options.size; i++) {
+                        for (i = 0; i < this.data.options.size; i++) {
                             if (response.hasOwnProperty(i)) {
-                                _this_survey.survey[i] = response[i] / sum * 100;
+                                this.survey[i] = response[i] / sum * 100;
                             }
                         }
-                        _this_survey.father.model_edit = !_this_survey.father.model_edit; //FOR BUG NOT REFRESH DATA
-                        _this_survey.father.model_edit = !_this_survey.father.model_edit;
+                        this.father.model_edit = !this.father.model_edit; //FOR BUG NOT REFRESH DATA
+                        this.father.model_edit = !this.father.model_edit;
                     }
                 })
             },
             refresh() {
                 this.getSurvey();
             },
-            start(){
+            start() {
                 //FOR BUG LAYOUT;
 
             }
 
         },
         mounted() {
-            this.data.src.value += Math.floor((Math.random() * 100) + 1);
+            this.data.background.value += Math.floor((Math.random() * 100) + 1);
         }
     }
 )
@@ -362,10 +379,11 @@ Vue.component(
         data: function () {
             return {
                 data: {
-                    src: {
-                        type: 'dash-form-string',
-                        name: 'Link da imagem',
-                        color: "white",
+                    background: {
+                        type: 'dash-form-background',
+                        name: 'Imagem de fundo',
+                        color: "black",
+                        opacity: 70,
                         value: "https://picsum.photos/1270/720/?random"
                     },
                     title: {
@@ -416,15 +434,16 @@ Vue.component(
                 if (this.data.json.data != null) {
                     this.data.title.value = this.data.json.data.title;
                     this.data.text.value = this.data.json.data.pretext;
-                    if (this.data.json.data.image != null) this.data.src.value = this.data.json.data.image;
+                    if (this.data.json.data.image != null) this.data.background.value = this.data.json.data.image;
                 }
             }
         },
         template: `
-        <v-card style="min-height:200px" :style="'background-image: url('+data.src.value+');'" class="extra-background-cover">
+        <v-card style="min-height:200px" :style="'background-image: url('+data.background.value+');'" class="extra-background-cover">
         <slot name='edit'></slot>
-        <div class='extra-background-darkness-more'></div>
-        <v-layout row wrap fill-height style='margin:0' style='position:absolute'>
+        <div class='extra-background-card' :style="'background-color:'+data.background.color+';opacity:'+data.background.opacity/100"></div>
+        <div style='position:absolute;width:100%;height:100%'>
+        <v-layout row wrap fill-height style='margin:0'>
             <v-flex d-flex xs12 >
                 <v-container>
                     <div :style="'font-size:'+data.title.size+'px;color:'+data.title.color+';width:100%'" :class="'text-xs-'+data.title.align+' font-weight-bold'">{{data.title.value}}</div>
@@ -447,6 +466,7 @@ Vue.component(
                 </v-layout>
             </v-flex>
         </v-layout>
+        </div>
     </v-card>
     `,
         methods: {

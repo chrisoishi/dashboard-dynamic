@@ -13,7 +13,7 @@
 
 
 <div style='position:absolute;width:100%;' class='ml-1 font-weight-bold text-xs-center'>ID # @{{connection_id}}</div>
-<div style='height:100%' v-show='connection'>
+<div style='height:100%' v-show='connection & startconnection'>
     <v-fade-transition v-for='i in dashs'>
         <v-container fluid fill-height grid-list-md v-show='i == page'>
             <dash-layout-full :index='i' :preview='preview' v-on:save='saveConfig($event)' ref="dash" :key='i'></dash-layout-full>
@@ -39,7 +39,7 @@
                                 <p class="text-xs-center"><img :src="'https://api.qrserver.com/v1/create-qr-code/?data=http://{{$_SERVER['HTTP_HOST']}}{{$_SERVER['REQUEST_URI']}}?id='+connection_id+'&size=200x200'"></p>
                             </v-flex>
                             <v-flex xs12 md6>
-                                <p class='text-xs-center display-4 white--text' style='text-shadow: 1px 1px grey'>#@{{this.connection_id}}</p>
+                                <p class='text-xs-center display-4 white--text' style='text-shadow: 1px 1px grey'>#@{{connection_id}}</p>
                                 <p class='text-xs-center display-3 white--text'>
                                     <v-btn outline color="white" dark width='100px' style='width:350px;height:70px;font-size:20pt;text-shadow: 1px 1px grey;shadow: 1px 1px grey'
                                         v-on:click='model_connect=true'>EDITAR
@@ -55,6 +55,43 @@
             </v-card>
             </v-flex>
 
+            </v-layout>
+        </v-container>
+    </v-fade-transition>
+</div>
+
+<div style='height:100%' v-show='!startconnection & connection'>
+    <v-fade-transition>
+        <v-container fill-height grid-list-md>
+            <v-layout row wrap align-center>
+                <v-flex xs12>
+                    <v-card>
+                        <v-container grid-list-xs>
+                            <v-layout row wrap>
+                                <v-flex xs12>
+                                    <div style='width:100%' class='text-xs-center display-3 font-weight-bold mb-3'>
+                                        ESCOLHA UMA AÇÃO
+                                    </div>
+                                </v-flex>
+                                <v-flex xs12 md6>
+                                    <div style='width:100%' class='text-xs-center'>
+                                        <v-btn outline block large color="green" @click='save();startconnection=true;waitConnection()'>
+                                            <v-icon class='mr-2'>add_circle_outline</v-icon> Começar nova dashboard
+                                        </v-btn>
+                                    </div>
+
+                                </v-flex>
+                                <v-flex xs12 md6>
+                                    <div style='width:100%' class='text-xs-center'>
+                                        <v-btn outline block large color="indigo" @click='startconnection=true;waitConnection()'>
+                                            <v-icon class='mr-2'>play_circle_outline</v-icon> Continuar
+                                        </v-btn>
+                                    </div>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                    </v-card>
+                </v-flex>
             </v-layout>
         </v-container>
     </v-fade-transition>
@@ -137,7 +174,7 @@
 <!--
     DIALOG SETTINGS
 -->
-<v-dialog v-model='model_settings' overflowed :overlay="false" max-width="500px" transition="dialog-transition">
+<v-dialog v-model='model_settings' overflowed :overlay="false" max-width="600px" transition="dialog-transition">
     <v-card>
         <v-toolbar color="primary" dark tabs>
             <h1>Configurações</h1>
@@ -162,12 +199,14 @@
                                     </v-flex>
                                     <v-flex xs12>
                                         <v-divider></v-divider>
-                                        <p class='mt-3 mb-5'>Criar novo template</p>
+                                        <p class='mt-3 mb-5'>Template atual</p>
                                         <v-text-field label="Nome do template" v-model='meta.name'>
                                         </v-text-field>
                                     </v-flex>
                                     <v-flex xs12 class='text-xs-right'>
-                                        <v-btn outline color="blue" dark @click="saveDash();model_settings = false;notify('Saved!')">Salvar</v-btn>
+                                        <v-btn outline color="red" dark @click="deleteTemplate();model_settings = false;notify('Deleted!')" v-if='editing_template'>Deletar</v-btn>
+                                        <v-btn outline color="orange" dark @click="saveDash(true);model_settings = false;notify('Saved!')" v-if='editing_template'>Atualizar</v-btn>
+                                        <v-btn outline color="blue" dark @click="saveDash(false);model_settings = false;notify('Saved!')">Salvar como novo</v-btn>
                                     </v-flex>
 
                                 </v-layout>
@@ -227,7 +266,7 @@
     NAVIGATION DASHS
 -->
 
-<v-speed-dial v-model="model_float_menu" bottom left fixed v-show='connection' v-if='is_editor'>
+<v-speed-dial v-model="model_float_menu" bottom left fixed v-show='connection' v-if='is_editor & startconnection'>
     <v-btn slot="activator" fab dark color="secondary">
         <v-icon>dashboard</v-icon>
         <v-icon>close</v-icon>
@@ -265,7 +304,7 @@
 <v-layout row wrap>
     <v-flex xs12 text-xs-center>
         <v-scale-transition>
-            <v-pagination v-model='page' :length="dashs" circle v-show='!preview'></v-pagination>
+            <v-pagination v-model='page' :length="dashs" circle v-show='!preview & startconnection'></v-pagination>
         </v-scale-transition>
     </v-flex>
 </v-layout>
@@ -373,14 +412,15 @@ Vue
                         preview: false,
                         preview_time: 10,
                     },
-                    data_card:{}
+                    data_card: {}
                 },
-                meta:{
+                meta: {
                     name: "",
                 },
                 is_load: false,
                 connection_id: "{{$id}}",
                 connection2: false,
+                startconnection: false,
                 updated_level: 0,
                 notification: {
                     model: false,
@@ -392,7 +432,8 @@ Vue
                 refresh_rate: 3000,
                 saved_dashs: [],
                 value_template: "",
-                timeout_show: null
+                timeout_show: null,
+                editing_template: false
             }
         },
         computed: {
@@ -408,7 +449,7 @@ Vue
         watch: {
             model_edit_card_show: function () {
                 if (!this.model_edit_card_show && this.model_edit_card.object != null) this.model_edit_card
-                    .object.save();
+                    .object.save(false);
             },
             preview: function () {
                 __this = this;
@@ -416,12 +457,12 @@ Vue
                     __this.running()
                 }, __this.configs.settings.preview_time * 1000);
             },
-            page: function (newV,oldV) {
+            page: function (newV, oldV) {
                 if (!this.preview) {
-                    this.save();
+                    if (newV != oldV) this.save();
                 }
-                this.$refs.dash[newV-1].start();
-                this.$refs.dash[oldV-1].end();
+                this.$refs.dash[newV - 1].start();
+                this.$refs.dash[oldV - 1].end();
             },
         },
         methods: {
@@ -430,10 +471,16 @@ Vue
             },
             saveConfig: function (config) {
                 this.configs["dash" + config.dash] = config.cfg;
-                this.save();
+
+                if (!config.onload) {
+                    this.save();
+                }
             },
             save: function () {
                 if (this.is_editor & !this.is_load) {
+                    if (this.editing_template) {
+                        this.saveDash(true);
+                    }
                     __this = this;
                     this.configs.settings.preview = this.preview;
                     this.configs.settings.page = this.page;
@@ -454,26 +501,32 @@ Vue
                     });
                 }
             },
-            saveDash: function () {
+            saveDash: function (isEditing) {
+                if(!isEditing)new_id = Math.floor((Math.random() * 99999) + 10000);
+                else new_id = "";
                 $.ajax({
                     url: "{{route('dashboard.saveDash')}}",
                     dataType: "JSON",
                     method: 'POST',
                     data: {
                         id: this.connection_id,
+                        new_id: new_id,
                         meta: this.meta,
                     },
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
-                });
+                }).always(()=>{
+                    this.getTemplates();
+                })
             },
+
             clearDash: function () {
                 this.$refs.dash[this.page - 1].$refs.card1.remove();
             },
             loadConfig: function () {
                 __this = this;
-                //alert(this.updated_level);
+
                 $.ajax({
                     url: "{{route('dashboard.load')}}" + "/" + this.connection_id + "/" + this.updated_level,
                     dataType: "JSON",
@@ -482,7 +535,6 @@ Vue
                     if (!response.hasOwnProperty('updated_level')) {
                         return;
                     }
-                    __this.is_load = true;
                     __this.updated_level = parseInt(response.updated_level);
                     __this.$refs.dash[0].$refs.card1.load(response.dash1, __this.$refs.dash[0].$refs
                         .card1);
@@ -502,9 +554,8 @@ Vue
                     Vue.nextTick(function () {
                         for (i = 1; i < __this.dashs; i++) {
                             __this.$refs.dash[i].$refs.card1.load(response['dash' + (i + 1)],
-                                __this.$refs.dash[i].$refs.card1,);
+                                __this.$refs.dash[i].$refs.card1, );
                         }
-                        __this.is_load = false;
                     });
 
                 });
@@ -527,9 +578,10 @@ Vue
                         dataType: "JSON",
                         method: 'GET',
                     }).done(function (response) {
-                        if (response.connection == "true") {
+                        if (response.connection != "false") {
                             _this.connection2 = true;
-
+                            _this.startconnection = true;
+                            _this.connection = response.connection
                             _this.running();
                             setTimeout(function () {
                                 _this.preview = false;
@@ -543,11 +595,29 @@ Vue
                         }
                     });
                 } else {
+
                     this.is_editor = true;
                     this.preview = false;
-                    this.refreshDash();
-
+                    if (this.startconnection) {
+                        this.refreshDash();
+                        this.startConnection();
+                    }
                 }
+
+            },
+            startConnection: function () {
+                $.ajax({
+                    url: "{{route('dashboard.startconnection')}}",
+                    dataType: "JSON",
+                    method: 'POST',
+                    data: {
+                        dash_id: this.connection_id,
+                        connection: this.connection_id,
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
 
             },
             refreshDash: function () {
@@ -555,7 +625,7 @@ Vue
                 this.loadConfig();
                 __this = this;
                 setTimeout(function () {
-                    __this.refreshDash();
+                    __this.refreshDash(false);
                 }, this.refresh_rate);
 
             },
@@ -579,14 +649,18 @@ Vue
                     }).done(function (response) {
                         __this.model_settings = false;
                         __this.updated_level = 0;
-                        window.location.reload();
 
                     });
                 }
             },
             editTemplate: function () {
                 if (this.value_template != '') {
-                    location.href = location.href.replace("id=" + this.connection_id, "id=" + this.value_template);
+                    this.updated_level = 0;
+                    this.connection_id = this.value_template;
+                    this.editing_template = true;
+                    this.model_settings = false;
+                    this.getMeta();
+                    //location.href = location.href.replace("id=" + this.connection_id, "id=" + this.value_template);
                 }
             },
             getTemplates: function () {
@@ -600,26 +674,44 @@ Vue
                 });
 
             },
-            addData: function(card_id,attr,value){
-                if(!this.configs.data_card.hasOwnProperty('id_'+card_id)){
-                    this.configs.data_card['id_'+card_id] = {}
+            deleteTemplate: function (isEditing) {
+                $.ajax({
+                    url: "{{route('dashboard.deleteDash')}}",
+                    dataType: "JSON",
+                    method: 'POST',
+                    data: {
+                        id: this.connection_id,
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                location.reload();
+            },
+            addData: function (card_id, attr, value) {
+                if (!this.configs.data_card.hasOwnProperty('id_' + card_id)) {
+                    this.configs.data_card['id_' + card_id] = {}
                 }
-                this.configs.data_card['id_'+card_id][attr] = value;
+                this.configs.data_card['id_' + card_id][attr] = value;
+            },
+            getMeta: function () {
+                $.ajax({
+                    url: "{{route('dashboard.metadash')}}/" + this.connection_id,
+                    dataType: "JSON",
+                    method: 'GET',
+                }).done(response => {
+                    if (response != null) {
+                        this.meta = response;
+                    }
+                });
             }
         },
         mounted() {
             this.waitConnection();
             this.getTemplates();
             __this = this;
-            $.ajax({
-                    url: "{{route('dashboard.metadash')}}/"+this.connection_id,
-                    dataType: "JSON",
-                    method: 'GET',
-                }).done(function (response) {
-                    if(response != null){
-                        __this.meta = response;
-                    }
-            });
+            this.getMeta();
+            this.model_id_connection = this.connection_id;
 
         }
     });
