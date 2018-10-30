@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html  style='overflow:hidden'>
 
 <head>
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
@@ -14,7 +14,7 @@
 
 <body>
     <main>
-    <div id="app">
+    <div id="app" >
         <v-app>
             <template>
                 @yield("vuetify-app-content")
@@ -27,7 +27,7 @@
     <script src="{{asset('vuetify/vue.min.js')}}"></script>
     <script src="{{asset('vuetify/vuetify.min.js')}}"></script>
     @yield("js")
-</body>
+</bod>
 
 </html>
 

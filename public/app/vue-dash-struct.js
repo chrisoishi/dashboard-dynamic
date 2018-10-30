@@ -1,3 +1,8 @@
+card_copy = {
+    type: "",
+    data: {}
+}
+
 Vue.component(
     'dash-layout-full', {
         props: {
@@ -11,24 +16,23 @@ Vue.component(
 
         },
         template: `<v-layout row wrap >
-    <v-flex d-flex xs12>
+    <v-flex d-flex xs12  style='overflow:hidden'>
         <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1' cascate=''></component>
     </v-flex>
 </v-layout>`,
         methods: {
             remove: function (card) {
-                if (this[card].indexOf('dash-card-add') > -1) this[card] = "";
-                else this[card] = "dash-card-add";
                 this.empty();
             },
             empty: function () {
                 if (this.index == app.dashs && this.index > 1) {
+
                     delete app.configs['dash' + app.dashs];
                     app.save();
                     app.dashs--;
                     app.page = app.dashs;
 
-                } else this.card1 = "dash-card-add";
+                }
             },
             setConfig: function (cfg, card, onload) {
                 //alert(JSON.stringify(cfg));
@@ -73,10 +77,10 @@ Vue.component(
             }
         },
         template: `<v-layout row wrap>
-        <v-flex d-flex xs12 md6>
+        <v-flex d-flex xs12 md6 style='overflow:hidden'>
         <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1' :cascate='cascate+"1:"'></component>
         </v-flex>
-        <v-flex d-flex xs12 md6>
+        <v-flex d-flex xs12 md6 style='overflow:hidden'>
         <component :is="'dash-card'" :card="card2" :card_slot="'card2'" :father='this' :preview='preview' ref='card2' :cascate='cascate+"2:"'></component>
         </v-flex>
     </v-layout>`,
@@ -127,10 +131,10 @@ Vue.component(
             }
         },
         template: `<v-layout row wrap>
-        <v-flex d-flex xs12>
+        <v-flex d-flex xs12 style='overflow:hidden'>
             <component :is="'dash-card'" :card="card1" :card_slot="'card1'" :father='this' :preview='preview' ref='card1' :key='1' :cascate='cascate+"1:"'></component>
         </v-flex>
-        <v-flex d-flex xs12>
+        <v-flex d-flex xs12 style='overflow:hidden'>
             <component :is="'dash-card'" :card="card2" :card_slot="'card2'" :father='this' :preview='preview' ref='card2' :key='2' :cascate='cascate+"2:"'></component>
         </v-flex>
     </v-layout>`,
@@ -152,7 +156,6 @@ Vue.component(
                 if (this.card1 == "" && this.card2 == "") this.father.remove();
             },
             setConfig: function (cfg, card, onload) {
-
                 this.config[card] = cfg;
                 this.father.setConfig(this.config, onload);
             },
@@ -206,17 +209,23 @@ Vue.component(
         <v-scale-transition>
             <v-speed-dial v-model="model_edit" absolute right direction='left' v-show='!preview' class='mt-2'>
             <v-btn slot="activator" fab dark color="secondary" small>
-                <v-icon>edit</v-icon>
+                <v-icon>settings</v-icon>
                 <v-icon>close</v-icon>
             </v-btn>
-            <v-btn color='blue' dark fab v-on:click="edit()" small>
-                <v-icon>info</v-icon>
+            <v-btn color='purple' dark fab v-on:click="edit()" small>
+                <v-icon>brush</v-icon>
             </v-btn>
             <v-btn color='orange' dark fab v-on:click="choices()" small>
             <v-icon>swap_horiz</v-icon>
         </v-btn>
             <v-btn color='red' dark fab v-on:click="remove(card_slot)" small>
                 <v-icon>delete</v-icon>
+            </v-btn>
+            <v-btn color='grey' dark fab v-on:click="cut()" small>
+                <v-icon>border_clear</v-icon>
+            </v-btn>
+            <v-btn color='green' dark fab v-on:click="paste()" small v-if='app.card_copy.type!=""'>
+                <v-icon>check_box</v-icon>
             </v-btn>
             </v-speed-dial>
         </v-scale-transition>
@@ -232,11 +241,15 @@ Vue.component(
                 this.change_onload(component, false);
             },
             change_onload: function (component, onload) {
+                this.card_id = Math.floor((Math.random() * 99999) + 10000);
                 app.dialog_add_component = false;
                 this.card = component;
                 this.father[this.card_slot] = component;
                 if (!onload) {
                     Vue.nextTick(() => {
+                        setTimeout(()=>{
+                            if (this.$refs.card.hasOwnProperty('setLayout')) this.$refs.card.setLayout(this.getSizer());
+                        },500);
                         this.save(onload);
                     });
                 }
@@ -245,29 +258,38 @@ Vue.component(
             load: function (cfg, card) {
                 if (cfg != null) {
                     if (!cfg.hasOwnProperty('id')) {
-                        cfg.id = Math.floor((Math.random() * 99999) + 100000);
+                        cfg.id = Math.floor((Math.random() * 99999) + 10000);
                     }
                     if (cfg.type == null) this.change_onload("dash-card-add", true);
                     else this.change_onload(cfg.type, true);
 
                     if (cfg.type.indexOf('layout') > -1) {
                         Vue.nextTick(function () {
-                            card.$refs.card.load(cfg.data);
+
+                            if(cfg.data!="null")card.$refs.card.load(cfg.data);
+                            else this.setConfig(null,true);
                         });
+
                     } else {
                         if (cfg.data != null) {
                             Vue.nextTick(() => {
                                 this.card_id = cfg.id;
                                 card.$refs.card.data = cfg.data;
                                 this.save(true);
+                                setTimeout(()=>{
+                                    if (this.$refs.card.hasOwnProperty('setLayout')) this.$refs.card.setLayout(this.getSizerType());
+                                },500);
                                 if (this.$refs.card.hasOwnProperty('refresh')) this.$refs.card.refresh();
                             });
+                        } else {
+                            this.setConfig(null, true);
                         }
                     }
 
                 }
             },
             remove: function () {
+                this.card_id = "";
                 if (this.card.indexOf('dash-card-add') > -1) {
                     this.father.remove(this.card_slot);
                 } else {
@@ -294,7 +316,8 @@ Vue.component(
 
             },
             setConfig: function (cfg, onload) {
-                if (this.card_id == null) this.card_id = Math.floor((Math.random() * 99999) + 100000);
+                if (this.card_id == null) this.card_id = Math.floor((Math.random() * 99999) + 10000);
+                if(cfg == null) cfg = "null";
                 this.father.setConfig({
                     type: this.card,
                     id: this.card_id,
@@ -302,11 +325,51 @@ Vue.component(
                 }, this.card_slot, onload);
             },
             start: function () {
+                setTimeout(()=>{
+                    if (this.$refs.card.hasOwnProperty('setLayout')) this.$refs.card.setLayout(this.getSizerType());
+                },500);
                 if (this.$refs.card.hasOwnProperty('start')) this.$refs.card.start();
             },
             end: function () {
                 if (this.$refs.card.hasOwnProperty('end')) this.$refs.card.end();
             },
+            cut: function () {
+                app.card_copy.type = this.card;
+                app.card_copy.data = this.$refs.card.data;
+                app.card_copy.id = this.card_id;
+                this.remove();
+            },
+            paste: function () {
+                this.change_onload(app.card_copy.type, true);
+
+                Vue.nextTick(() => {
+                    this.$refs.card.data = app.card_copy.data;
+                    this.card_id = app.card_copy.id;
+                    setTimeout(()=>{
+                        if (this.$refs.card.hasOwnProperty('setLayout')) this.$refs.card.setLayout(this.getSizerType());
+                    },500);
+                    if (this.$refs.card.hasOwnProperty('refresh')) this.$refs.card.refresh();
+                    this.save(false);
+                });
+                app.card_copy.type = "";
+            },
+            getSizerType: function () {
+
+                div = $(this.$refs.card.$el);
+                ex = this.cascate.split(":");
+                if(div.width()==0)return "0";
+                if (ex.length >= 4) return "small";
+                else if (div.width() / div.height() >= 1.5) return "2x1";
+                else if (div.height() / div.width() >= 1.5) return "1x2";
+                return "1x1";
+            },
+            getSize: function(){
+                div = $(this.$refs.card.$el);
+                return{
+                    width: div.width(),
+                    height: div.height()
+                }
+            }
         },
     },
 )
@@ -318,10 +381,15 @@ Vue.component(
             father: Object,
             cascate: Number
         },
-        computed:{
-            home: function(){
-                if(this.father.cascate=='')return true;
+        computed: {
+            home: function () {
+                if (this.father.cascate == '') return true;
                 else return false;
+            }
+        },
+        data(){
+            return {
+                data:null
             }
         },
         template: `
@@ -330,6 +398,9 @@ Vue.component(
             <v-toolbar color="grey" dark style='position:absolute'>
                 <v-toolbar-title>#{{cascate}}</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <v-btn icon v-on:click="father.paste()" v-if='app.card_copy.type!=""'>
+                <v-icon>check_box</v-icon>
+            </v-btn>
                 <v-btn icon v-on:click="father.change('dash-layout-2x1')">
                 <v-icon>view_agenda</v-icon>
             </v-btn>
@@ -345,9 +416,9 @@ Vue.component(
             </v-toolbar>
         <v-container class='font-weight-bold caption' fill-height v-if='home'>
         <div class='text-xs-center grey--text' style='width:100%'>
-            Clique em <v-icon>add_circle_outline</v-icon> para adicionar um novo card<br>
-            Clique em <v-icon>view_agenda</v-icon> para adicionar um layout 1x2<br>
-            Clique em <v-icon style="transform:rotate(90deg)">view_agenda</v-icon> para adicionar um layout 2x1<br>
+            Clique em <v-icon>add_circle_outline</v-icon> para adicionar um cartão<br>
+            Clique em <v-icon>view_agenda</v-icon> para adicionar um layout 2x1<br>
+            Clique em <v-icon style="transform:rotate(90deg)">view_agenda</v-icon> para adicionar um layout 1x2<br>
             </div>
         </v-container>
         </v-card></v-fade-transition>`,
@@ -355,3 +426,72 @@ Vue.component(
     },
 
 )
+
+
+
+Vue.component("dash-text", {
+    props: {
+        data: {
+            type: Object,
+            default: {
+                size: "",
+                color: "",
+                aling: "",
+                font: "regular"
+            }
+        },
+    },
+    data() {
+        return {
+            default_size: "0",
+        }
+    },
+    template: `
+    <div style='font-size:1vw;height:100%;max-height:100%;width:100%;max-width:100%' ref='container'>
+    <v-layout align-center fill-height :style="'font-size:'+default_size+'em;margin:0'">
+    <v-flex :style="'font-size:'+data.size+'em;color:'+data.color+';white-space: pre-line;'" :class="'font-weight-'+data.font+' text-xs-'+data.align">{{data.value}}</v-flex>
+    </v-layout>
+    </div>`,
+    methods: {
+        resize: function () {
+
+            div = $(this.$refs.container);
+            size = div.height()/window.innerHeight;
+            prop = div.width()/div.height()
+            if(prop>1)size2=1+(prop*0.2);
+            else size2=1;
+            size = size*size2;
+            this.default_size = size;
+        }
+    },
+})
+
+
+Vue.component("dash-container", {
+    props: {
+        size: Number
+    },
+    data() {
+        return {
+            default_size: "0",
+        }
+    },
+    template: `
+    <div style='font-size:1vw;height:100%;max-height:100%;width:100%;max-width:100%' ref='container'>
+    <div :style="'font-size:'+default_size+'em'" >
+        <div :style="'font-size:'+size+'em'"><slot></slot></div>
+    </div>
+    </div>`,
+    methods: {
+        resize: function () {
+            div = $(this.$refs.container);
+            size = div.height()/window.innerHeight;
+            prop = div.width()/div.height()
+            if(prop>1)size2=1+(prop*0.2);
+            else size2=1;
+            size = size*size2;
+            this.default_size = size;
+        }
+    },
+})
+

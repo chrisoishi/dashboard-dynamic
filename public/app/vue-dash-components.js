@@ -17,22 +17,24 @@ Vue.component(
                     title: {
                         type: 'dash-form-text',
                         name: 'Título',
-                        size: "50",
+                        size: "2",
                         color: "black",
                         align: 'left',
-                        value: "Título"
+                        value: "Título",
+                        font: "bold",
                     },
                     text: {
                         type: 'dash-form-textarea',
                         name: 'Texto',
-                        size: "30",
+                        size: "1",
                         color: "#FFFFFF",
                         align: 'left',
-                        value: "Texto"
+                        value: "Texto",
+                        font: "regular",
 
                     },
                 },
-
+                show_text: false,
             }
         },
         computed: {},
@@ -43,18 +45,25 @@ Vue.component(
         <div style='position:absolute;width:100%;height:100%'>
         <v-container fill-height>
             <v-layout row wrap fill-height>
-                <v-flex d-flex xs12 :class="'text-xs-'+data.title.align">
-                    <div :style="'font-size:'+data.title.size+'px;color:'+data.title.color" class='font-weight-bold'>{{data.title.value}}</div>
+                <v-flex d-flex xs12 style='height:50%'>
+                    <dash-text :data='data.title' ref='title'></dash-text>
                 </v-flex>
-                <v-flex d-flex xs12 :class="'text-xs-'+data.text.align">
-                <div :style="'font-size:'+data.text.size+'px;color:'+data.text.color+';white-space: pre-line;'" class='font-weight-regular'>{{data.text.value}}</div>
+                <v-flex d-flex xs12 style='height:50%'>
+                <dash-text :data='data.text' ref='text'></dash-text>
                 </v-flex>
             </v-layout>
         </v-container>
         </div>
     </v-card>
     `,
-        methods: {},
+        methods: {
+            setLayout: function (sizer) {
+                Vue.nextTick(() => {
+                    this.$refs.title.resize();
+                    this.$refs.text.resize();
+                });
+            }
+        },
         mounted: function () {
             this.data.background.value += Math.floor((Math.random() * 100) + 1);
         }
@@ -79,11 +88,13 @@ Vue.component(
                     title: {
                         type: 'dash-form-text',
                         name: 'Título',
-                        size: "20",
+                        size: "2",
                         color: "white",
                         value: "Aniversariantes do mês",
-                        align: 'left',
+                        align: 'center',
                         size_max: '30',
+                        font: 'bold',
+
                     },
                     json: {
                         type: 'dash-form-json',
@@ -134,7 +145,7 @@ Vue.component(
         <slot name='edit'></slot>
         <div style='position:absolute;width:100%;height:100%'>
         <v-toolbar :style='"background-color:"+data.toolbar_color.value' dark >
-        <v-toolbar-title :style="'font-size:'+data.title.size+'px;color:'+data.title.color+';width:100%'" :class="'text-xs-'+data.title.align+' font-weight-bold'">{{data.title.value}}</v-toolbar-title>
+        <dash-text :data='data.title' ref='title'></dash-text>
       </v-toolbar>
       <v-data-table dark :headers="header" :items="data.json.data" hide-actions class='extra-birthday' :pagination.sync='pagination'>
       <template slot="items" slot-scope="props">
@@ -150,15 +161,26 @@ Vue.component(
     </div>
     </v-card>
     `,
+        methods: {
+            getBirthday: function () {
+                $.ajax({
+                    url: this.data.json.value,
+                    dataType: "JSON",
+                    method: 'GET',
+                }).done((response) => {
+                    this.data.json.data = response;
+                    this.setLayout();
+                });
+            },
+            setLayout: function(sizer){
+                Vue.nextTick(()=>{
+                    this.$refs.title.resize();
+                })
+            }
+        },
+
         mounted() {
-            this_s = this;
-            $.ajax({
-                url: this.data.json.value,
-                dataType: "JSON",
-                method: 'GET',
-            }).done(function (response) {
-                this_s.data.json.data = response;
-            });
+            this.getBirthday();
         }
     }
 )
@@ -231,7 +253,7 @@ Vue.component(
                     title: {
                         type: 'dash-form-text',
                         name: 'Pergunta',
-                        size: "50",
+                        size: "10",
                         color: "white",
                         align: 'center',
                         value: "Pergunta???"
@@ -239,7 +261,7 @@ Vue.component(
                     qr_size: {
                         type: 'dash-form-slide',
                         name: 'Tamanho do QR CODE',
-                        size: "50",
+                        size: "100",
                         size_max: '100',
 
                     },
@@ -250,15 +272,23 @@ Vue.component(
                         size_max: "6",
                         items: []
                     },
-                    options_size:{
+                    options_size: {
                         type: 'dash-form-slide',
                         name: "Tamanho das respostas",
-                        size: "10",
-                        size_max: "50"
+                        size: "6",
+                        step: "0.1",
                     }
                 },
                 survey: {},
                 colors: ['blue', 'purple', 'green', 'orange darken-4', 'red', 'brown darken-3'],
+                layout: "",
+                layout2: {
+                    width1:'100%',
+                    width2:'100%',
+                    height1:'50%',
+                    height2:'50%',
+                    height3: '50%'
+                }
 
             }
         },
@@ -279,14 +309,19 @@ Vue.component(
             },
             url: function () {
                 return $.url + 'survey/' + app.connection_id + '/' + this.father.card_id;
+            },
+            layout_options: function(){
+                if(this.data.options.size == '1')return '100%';
+                else if(this.data.options.size == '2')return '50%';
+                else return '33.33%';
             }
         },
         watch: {
-            "data.options.size": function (val,oldval) {
-                if(val!=oldval)
-                for (i = 0; i < val; i++) {
-                    this.survey[i] = 0;
-                }
+            "data.options.size": function (val, oldval) {
+                if (val != oldval)
+                    for (i = 0; i < val; i++) {
+                        this.survey[i] = 0;
+                    }
             }
         },
         template: `
@@ -296,32 +331,31 @@ Vue.component(
         <div style='position:absolute;width:100%;height:100%'>
             <v-container fill-height>
                 <v-layout row wrap>
-                    <v-flex xs12 :class="'text-xs-'+data.title.align">
-                        <v-layout align-center row fill-height>
-                            <v-flex xs12>
-                                <div :style="'font-size:'+data.title.size+'px;color:'+data.title.color+''" class='font-weight-bold'>{{data.title.value}}</div>
+                    <v-flex :style="'height:'+layout2.height1+';width:'+layout2.width1" >
+                        <v-layout fill-height row wrap>
+                            <v-flex xs12 :style="'height:'+layout2.height3">
+                                <dash-text :data='data.title' ref='title'></dash-text>
                             </v-flex>
-                        </v-layout>
-                    </v-flex>
-                    <v-flex class='text-xs-center'>
-                    <v-container fill-height>
-                            <v-layout fill-height row wrap>
-                                <v-flex  d-flex style='min-width:100px' v-for='(ans,i) in data.options.items'>
-                                    <v-layout justify-space-between column fill-height>
-                                    <v-flex xs12 class='white--text' :style="'font-size:'+data.options_size.size+'px'">{{ans.value}}</v-flex>
-                                    <v-flex xs12>
-                                    <p class='white--text' :style="'font-size:'+data.options_size.size*0.6+'px'">{{Math.round(survey[i]*100)/100}} % </p>
-                                    <v-progress-linear height='15' :value='survey[i]' :color='colors[color_choice[i]]'></v-progress-linear></v-flex>
+                            <v-flex xs12  style='max-height:50%;height:50%' v-if="layout!='small'">
+                                <dash-container :size='data.options_size.size' ref='options'>
+                                <v-layout fill-height row wrap>
+                                <v-flex :style="'width:'+layout_options+';max-width:'+layout_options"  v-for='(ans,i) in data.options.items'>
+                                    <v-layout justify-space-between row wrap fill-height>
+                                        <v-flex class='white--text' >{{ans.value}} </v-flex>
+                                        <v-flex class='white--text' > <span class='white--text' style='font-size:0.6em'>{{Math.round(survey[i]*100)/100}}% </span></v-flex>
+                                        <v-flex xs12>
+                                            <v-progress-linear height='15' :value='survey[i]' :color='colors[color_choice[i]]'></v-progress-linear>
+                                        </v-flex>
                                     </v-layout>
                                 </v-flex>
                             </v-layout>
-                            </v-container>
+                                </dash-container>
+                            </v-flex>
+                        </v-layout>
                     </v-flex>
-                    <v-flex class='text-xs-center' style='min-width:200px'>
+                    <v-flex :style="'height:'+layout2.height2+';width:'+layout2.width2">
                         <v-container fill-height>
-                            <a @click="window.open(url)" style='width:100%;height:100%'>
-                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?data='+url+'&size=500x500'" :style="'min-height:'+data.qr_size.size+'%;height:50px;display: block;margin-left: auto;margin-right: auto;'">
-                            </a>
+                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?data='+url+'&size=500x500'" :style="'min-height:'+data.qr_size.size+'%;height:50px;display: block;margin-left: auto;margin-right: auto;'" @click="window.open(url)">
                         </v-container>
                     </v-flex>
                 </v-layout>
@@ -351,20 +385,50 @@ Vue.component(
                         }
                         this.father.model_edit = !this.father.model_edit; //FOR BUG NOT REFRESH DATA
                         this.father.model_edit = !this.father.model_edit;
+                        this.setLayout(this.father.getSizerType());
                     }
                 })
+            },
+            setLayout(sizer) {
+                this.layout = sizer;
+                if (this.layout == '2x1' )this.layout2 = {
+                    width1:'50%',
+                    width2:'50%',
+                    height1:'100%',
+                    height2:'100%',
+                    height3: '50%'
+                };
+                else if(this.layout == 'small' )this.layout2 = {
+                    width1:'100%',
+                    width2:'100%',
+                    height1:'50%',
+                    height2:'50%',
+                    height3: '100%'
+                }
+                else this.layout2 =  {
+                    width1:'100%',
+                    width2:'100%',
+                    height1:'60%',
+                    height2:'40%',
+                    height3: '50%'
+                };
+                Vue.nextTick(() => {
+                    this.$refs.title.resize();
+                    this.$refs.options.resize();
+                    //this.$refs.text.resize();
+                });
             },
             refresh() {
                 this.getSurvey();
             },
             start() {
-                //FOR BUG LAYOUT;
-
+                //FOR BUG LAYOUT
             }
 
         },
         mounted() {
             this.data.background.value += Math.floor((Math.random() * 100) + 1);
+            this.refresh();
         }
     }
 )
@@ -389,18 +453,20 @@ Vue.component(
                     title: {
                         type: 'dash-form-text',
                         name: 'Título',
-                        size: "50",
+                        size: "6",
                         color: "white",
                         align: 'center',
-                        value: "Título"
+                        value: "Título",
+                        font: "bold",
                     },
                     text: {
                         type: 'dash-form-textarea',
                         name: 'Texto',
-                        size: "15",
+                        size: "4",
                         color: "white",
-                        align: 'jusitfy',
-                        value: "Texto"
+                        align: 'justify',
+                        value: "Texto",
+                        font: "regular",
 
                     },
                     qr_size: {
@@ -422,7 +488,12 @@ Vue.component(
                         }
                     }
                 },
-
+                layout: {
+                    width1: "",
+                    height1: "",
+                    height2: "",
+                    height3:"",
+                },
             }
         },
         watch: {
@@ -442,29 +513,24 @@ Vue.component(
         <v-card style="min-height:200px" :style="'background-image: url('+data.background.value+');'" class="extra-background-cover">
         <slot name='edit'></slot>
         <div class='extra-background-card' :style="'background-color:'+data.background.color+';opacity:'+data.background.opacity/100"></div>
-        <div style='position:absolute;width:100%;height:100%'>
+        <div style='position:absolute;width:100%;height:100%;;max-height:100%'>
         <v-layout row wrap fill-height style='margin:0'>
-            <v-flex d-flex xs12 >
-                <v-container>
-                    <div :style="'font-size:'+data.title.size+'px;color:'+data.title.color+';width:100%'" :class="'text-xs-'+data.title.align+' font-weight-bold'">{{data.title.value}}</div>
+            <v-flex d-flex xs12 :style="'height:'+layout.height1">
+            <v-container fill-height style='padding:1%'>
+                <dash-text :data='data.title' ref='title'></dash-text>
                 </v-container>
             </v-flex>
-            <v-flex d-flex xs12>
-                <v-layout row wrap>
-                    <v-flex>
-                        <v-container>
-                            <div :style="'font-size:'+data.text.size+'px;color:'+data.text.color+';white-space: pre-line;width:100%'"
-                                :class="'text-xs-'+data.text.align+' font-weight-regular'">{{data.text.value}}</div>
-                        </v-container>
-                    </v-flex>
-                    <v-flex>
-                        <v-container fill-height style='text-align:center'>
-                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?data='+data.json.data.notice_url+'&size=500x500'"
-                                :style="'min-height:'+data.qr_size.size+'%;height:50px;display: block;margin-left: auto;margin-right: auto;'">
-                        </v-container>
-                    </v-flex>
-                </v-layout>
+            <v-flex d-flex :style="'width:'+layout.width1+';height:'+layout.height2">
+                <v-container fill-height>
+                    <dash-text :data='data.text' ref='text'></dash-text>
+                </v-container>
             </v-flex>
+            <v-flex d-flex :style="'width:'+layout.width1+';height:'+layout.height3">
+                <v-container fill-height style='text-align:center;padding:0'>
+                        <img :src="'https://api.qrserver.com/v1/create-qr-code/?data='+data.json.data.notice_url+'&size=800x800'"
+                            :style="'min-height:'+data.qr_size.size+'%;height:50px;display: block;margin-left: auto;margin-right: auto;'" @click="window.open(data.json.data.notice_url)">
+            </v-container>
+        </v-flex>
         </v-layout>
         </div>
     </v-card>
@@ -479,12 +545,34 @@ Vue.component(
                     }).done(response => {
 
                         this.data.json.data = response;
+                        this.setLayout(this.father.getSizerType());
                     })
                 }
-            }
+            },
+            setLayout: function (sizer) {
+                if (sizer == "0") return;
+                if(sizer == "2x1"){
+                    this.layout.width1 = "50%";
+                    this.layout.height1 = "50%";
+                    this.layout.height2 = "50%";
+                    this.layout.height3 = "50%";
+                }
+                else{
+                    this.layout.width1 = "100%";
+                    this.layout.height1 = "30%";
+                    this.layout.height2 = "30%";
+                    this.layout.height3 = "40%";
+                }
 
+
+                Vue.nextTick(() => {
+                    this.$refs.title.resize();
+                    this.$refs.text.resize();
+                })
+
+            },
         },
-        mounted: function () {
+        mounted() {
             this.getNotice();
         }
     }

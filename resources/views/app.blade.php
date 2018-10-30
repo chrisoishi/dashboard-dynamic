@@ -12,13 +12,13 @@
 -->
 
 
-<div style='position:absolute;width:100%;' class='ml-1 font-weight-bold text-xs-center'>ID # @{{connection_id}}</div>
+<div style='position:absolute;width:100%;' class='ml-1 font-weight-bold text-xs-center' >ID # @{{connection_id}}</div>
 <div style='height:100%' v-show='connection & startconnection'>
-    <v-fade-transition v-for='i in dashs'>
+    <template v-for='i in dashs'>
         <v-container fluid fill-height grid-list-md v-show='i == page'>
             <dash-layout-full :index='i' :preview='preview' v-on:save='saveConfig($event)' ref="dash" :key='i'></dash-layout-full>
         </v-container>
-    </v-fade-transition>
+    </template>
 </div>
 
 
@@ -204,9 +204,12 @@
                                         </v-text-field>
                                     </v-flex>
                                     <v-flex xs12 class='text-xs-right'>
-                                        <v-btn outline color="red" dark @click="deleteTemplate();model_settings = false;notify('Deleted!')" v-if='editing_template'>Deletar</v-btn>
-                                        <v-btn outline color="orange" dark @click="saveDash(true);model_settings = false;notify('Saved!')" v-if='editing_template'>Atualizar</v-btn>
-                                        <v-btn outline color="blue" dark @click="saveDash(false);model_settings = false;notify('Saved!')">Salvar como novo</v-btn>
+                                        <v-btn outline color="red" dark @click="deleteTemplate();model_settings = false;notify('Deleted!')"
+                                            v-if='editing_template'>Deletar</v-btn>
+                                        <v-btn outline color="orange" dark @click="saveDash(true);model_settings = false;notify('Saved!')"
+                                            v-if='editing_template'>Atualizar</v-btn>
+                                        <v-btn outline color="blue" dark @click="saveDash(false);model_settings = false;notify('Saved!')">Salvar
+                                            como novo</v-btn>
                                     </v-flex>
 
                                 </v-layout>
@@ -275,6 +278,9 @@
     <v-btn color='red' dark fab @click='dashs++;page=dashs'>
         <v-icon>add</v-icon>
     </v-btn>
+    <v-btn color='orange darken-4' dark fab fab @click='model_swap_dash=true'>
+        <v-icon>swap_horiz</v-icon>
+    </v-btn>
     <v-btn color='blue-grey darken-4' dark fab fab @click='clearDash()'>
         <v-icon>delete</v-icon>
     </v-btn>
@@ -288,6 +294,34 @@
 
 </v-speed-dial>
 
+
+<v-dialog v-model='model_swap_dash' overflowed :overlay="false" max-width="500px" transition="dialog-transition">
+    <v-card>
+        <v-container grid-list-xs>
+            <v-layout row wrap>
+                <v-flex xs12 class='text-xs-center display-1'>
+                    DASHBOARD ATUAL
+                </v-flex>
+                <v-flex xs12 md6>
+
+                    <v-btn block color="blue" dark @click='changeOrder("LEFT")'>
+                        <v-icon>arrow_back</v-icon>
+                        Mover para esquerda
+                    </v-btn>
+                </v-flex>
+                <v-flex xs12 md6
+                >
+
+                    <v-btn block color="orange" dark @click='changeOrder("RIGHT")'>
+                        Mover para direita
+                        <v-icon>arrow_forward</v-icon>
+                    </v-btn>
+
+                </v-flex>
+            </v-layout>
+        </v-container>
+    </v-card>
+</v-dialog>
 
 
 @endsection
@@ -329,9 +363,14 @@ Vue
 <script src="{{asset('app/vue-dash-components.js')}}"></script>
 <script src="{{asset('app/plugins/swatches/vue-swatches.min.js')}}"></script>
 <script src="{{asset('app/plugins/video-youtube/iframe_api.js')}}"></script>
+<script src="{{asset('app/plugins/vue-resize/vue-resize.min.js')}}"></script>
 <script>
     $.url = location.href.split('?')[0];
     Vue.component('swatches', window.VueSwatches.default);
+    Vue.component('resize-observer', ResizeObserver)
+    //$('.dash-text').flowtype();
+
+
 
     app = new Vue({
         el: '#app',
@@ -401,6 +440,7 @@ Vue
                 model_settings: false,
                 model_connect: false,
                 model_id_connection: "",
+                model_swap_dash: false,
                 dialog_add_component: false,
                 card_object: null,
                 dashs: 1,
@@ -433,7 +473,11 @@ Vue
                 saved_dashs: [],
                 value_template: "",
                 timeout_show: null,
-                editing_template: false
+                editing_template: false,
+                card_copy: {
+                    type: "",
+                    data: {}
+                }
             }
         },
         computed: {
@@ -486,6 +530,7 @@ Vue
                     this.configs.settings.page = this.page;
                     this.updated_level++;
                     this.configs.updated_level = this.updated_level
+                    this.configs.number_dashs = this.dashs;
                     $.ajax({
                         url: "{{route('dashboard.save')}}",
                         dataType: "JSON",
@@ -502,7 +547,7 @@ Vue
                 }
             },
             saveDash: function (isEditing) {
-                if(!isEditing)new_id = Math.floor((Math.random() * 99999) + 10000);
+                if (!isEditing) new_id = Math.floor((Math.random() * 99999) + 10000);
                 else new_id = "";
                 $.ajax({
                     url: "{{route('dashboard.saveDash')}}",
@@ -516,7 +561,7 @@ Vue
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
-                }).always(()=>{
+                }).always(() => {
                     this.getTemplates();
                 })
             },
@@ -546,15 +591,16 @@ Vue
                     }
                     if (!__this.preview && !__this.is_editor) __this.page = parseInt(__this.configs
                         .settings.page, 10);
-                    while (response.hasOwnProperty('dash' + i)) {
-                        if (i > __this.dashs) __this.dashs++;
-                        i++
-                    }
-                    if (__this.dashs > i - 1) __this.dashs = i - 1;
+
+                    __this.dashs = parseInt(response.number_dashs);
+                    //if (__this.dashs > i - 1) __this.dashs = i - 1;
                     Vue.nextTick(function () {
                         for (i = 1; i < __this.dashs; i++) {
-                            __this.$refs.dash[i].$refs.card1.load(response['dash' + (i + 1)],
-                                __this.$refs.dash[i].$refs.card1, );
+                            if (response.hasOwnProperty('dash' + i)) {
+                                __this.$refs.dash[i].$refs.card1.load(response['dash' + (i +
+                                        1)],
+                                    __this.$refs.dash[i].$refs.card1, );
+                            }
                         }
                     });
 
@@ -704,14 +750,46 @@ Vue
                         this.meta = response;
                     }
                 });
+            },
+            changeOrder: function (direction) {
+                switch (direction) {
+                    case "LEFT":
+                        if (this.page > 1) {
+                            next = parseInt(this.page) - 1;
+                            copy = this.configs['dash' + next];
+                            this.$refs.dash[this.page - 2].$refs.card1.load(this.configs['dash' + this.page],
+                                this.$refs.dash[this.page - 2].$refs.card1);
+                            this.$refs.dash[this.page - 1].$refs.card1.load(copy, this.$refs.dash[this.page -
+                                1].$refs.card1);
+                            this.page--;
+                            setTimeout(() => {
+                                this.save();
+                            },1000)
+                        }
+                        break;
+                    case "RIGHT":
+                        if (this.page < this.dashs) {
+                            next = parseInt(this.page) + 1;
+                            copy = this.configs['dash' + next];
+                            this.$refs.dash[this.page].$refs.card1.load(this.configs['dash' + this.page],
+                                this.$refs.dash[this.page].$refs.card1);
+                            this.$refs.dash[this.page - 1].$refs.card1.load(copy, this.$refs.dash[this.page -
+                                1].$refs.card1);
+                            this.page++;
+                            setTimeout(() => {
+                                this.save();
+                            },1000)
+                        }
+                        break;
+                }
             }
         },
         mounted() {
             this.waitConnection();
             this.getTemplates();
-            __this = this;
             this.getMeta();
             this.model_id_connection = this.connection_id;
+
 
         }
     });

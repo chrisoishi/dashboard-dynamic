@@ -85,7 +85,7 @@ class Dashboard extends Controller
             Storage::put("cfgs/".$id.".updated","0");
         }
         $updated_level = Storage::get("cfgs/$id.updated");
-        if($updated_level > $update) return Storage::get("cfgs/$id.txt");
+        if($updated_level != $update) return Storage::get("cfgs/$id.txt");
         else return "{}";
     }
     function start(Request $r){

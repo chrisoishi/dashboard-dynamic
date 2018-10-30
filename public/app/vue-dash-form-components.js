@@ -124,7 +124,7 @@ Vue.component(
         computed:{
             max2: function(){
                 if(this.value.hasOwnProperty('size_max')) return this.value.size_max;
-                else return 200;
+                else return 30;
             },
             align: function(){
                 if(this.value.align=='left')return 0;
@@ -160,7 +160,7 @@ Vue.component(
         </v-flex>
 
         <v-flex xs12>
-            <v-slider small :value="value.size" :max='max2' thumb-label="always" label='Tamanho' thumb-size='25px' v-on:input="change($event,'size')"></v-slider>
+            <v-slider small step='0.1' :value="value.size" :max='max2' thumb-label="always" label='Tamanho' thumb-size='25px' v-on:input="change($event,'size')"></v-slider>
         </v-flex>
 
     </v-layout>`,
@@ -178,12 +178,11 @@ Vue.component(
         props: {
             value: Object,
             name: String,
-
         },
         computed:{
             max2: function(){
                 if(this.value.hasOwnProperty('size_max')) return this.value.size_max;
-                else return 200;
+                else return 30;
             },
             align: function(){
                 if(this.value.align=='left')return 0;
@@ -219,7 +218,7 @@ Vue.component(
         </v-flex>
 
         <v-flex xs12>
-            <v-slider small :value="value.size" max='200' thumb-label="always" label='Tamanho' thumb-size='25px' v-on:input="change($event,'size')"></v-slider>
+            <v-slider small step='0.1' :value="value.size" :max='max2' thumb-label="always" label='Tamanho' thumb-size='25px' v-on:input="change($event,'size')"></v-slider>
         </v-flex>
 
     </v-layout>`,
@@ -242,12 +241,16 @@ Vue.component(
         computed:{
             max2: function(){
                 if(this.value.hasOwnProperty('size_max')) return this.value.size_max;
-                else return 200;
+                else return 30;
             },
+            step: function(){
+                if(this.value.hasOwnProperty('step')) return this.value.step;
+                else return 1;
+            }
         },
         template: `<v-layout row wrap>
         <v-flex xs12>
-            <v-slider small :value="value.size" :max='max2' thumb-label="always" thumb-size='25px' v-on:input="change($event,'size')"></v-slider>
+            <v-slider small :step='step' :value="value.size" :max='max2' thumb-label="always" thumb-size='25px' v-on:input="change($event,'size')"></v-slider>
         </v-flex>
     </v-layout>`,
         methods: {
