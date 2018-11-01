@@ -248,7 +248,11 @@ Vue.component(
                 if (!onload) {
                     Vue.nextTick(() => {
                         setTimeout(()=>{
-                            if (this.$refs.card.hasOwnProperty('setLayout')) this.$refs.card.setLayout(this.getSizer());
+
+                            if (this.$refs.card.hasOwnProperty('setLayout')){
+
+                                this.$refs.card.setLayout(this.getSizerType());
+                            }
                         },500);
                         this.save(onload);
                     });

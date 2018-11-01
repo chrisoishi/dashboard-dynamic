@@ -17,7 +17,7 @@ Vue.component(
                     title: {
                         type: 'dash-form-text',
                         name: 'Título',
-                        size: "2",
+                        size: "7",
                         color: "black",
                         align: 'left',
                         value: "Título",
@@ -26,7 +26,7 @@ Vue.component(
                     text: {
                         type: 'dash-form-textarea',
                         name: 'Texto',
-                        size: "1",
+                        size: "6",
                         color: "#FFFFFF",
                         align: 'left',
                         value: "Texto",
@@ -79,16 +79,17 @@ Vue.component(
         data: function () {
             return {
                 data: {
-                    src: {
-                        type: 'dash-form-string',
-                        name: 'Link da imagem',
-                        color: "white",
+                    background: {
+                        type: 'dash-form-background',
+                        name: 'Imagem de fundo',
+                        color: "black",
+                        opacity: 0,
                         value: "images/birthday.jpg"
                     },
                     title: {
                         type: 'dash-form-text',
                         name: 'Título',
-                        size: "2",
+                        size: "6",
                         color: "white",
                         value: "Aniversariantes do mês",
                         align: 'center',
@@ -105,7 +106,8 @@ Vue.component(
                     list_size: {
                         type: 'dash-form-slide',
                         name: 'Tamanho da lista',
-                        size: "50",
+                        size: "30",
+                        step:'0.1'
                     },
                     toolbar_color: {
                         type: 'dash-form-color',
@@ -140,24 +142,27 @@ Vue.component(
         },
         computed: {},
         template: `
-        <v-card :style="'background-image: url('+data.src.value+');min-height:200px'"class="extra-background-cover">
-        <div class='extra-background-darkness'></div>
+        <v-card :style="'background-image: url('+data.background.value+');min-height:200px'"class="extra-background-cover">
         <slot name='edit'></slot>
+        <div class='extra-background-card' :style="'background-color:'+data.background.color+';opacity:'+data.background.opacity/100"></div>
         <div style='position:absolute;width:100%;height:100%'>
+        <dash-container :size='data.list_size.size' ref='table'>
         <v-toolbar :style='"background-color:"+data.toolbar_color.value' dark >
         <dash-text :data='data.title' ref='title'></dash-text>
       </v-toolbar>
-      <v-data-table dark :headers="header" :items="data.json.data" hide-actions class='extra-birthday' :pagination.sync='pagination'>
-      <template slot="items" slot-scope="props">
-          <td class='text-xs-center pa-1' style='background-color:rgba(0, 0, 0, 0)'>
-        <v-avatar  :size="data.list_size.size" color="grey lighten-4">
-            <img :src="props.item.src" alt="avatar">
-        </v-avatar>
-          </td>
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.date }}</td>
-      </template>
-    </v-data-table>
+
+        <v-data-table dark :headers="header" :items="data.json.data" hide-actions class='extra-birthday' :pagination.sync='pagination'>
+        <template slot="items" slot-scope="props">
+            <td class='text-xs-center pa-1' style='background-color:rgba(0, 0, 0, 0)'>
+            <v-avatar  :size="data.list_size.size*3" color="grey lighten-4">
+                <img :src="props.item.src" alt="avatar">
+            </v-avatar>
+            </td>
+            <td style='font-size:0.1em'>{{ props.item.name }}</td>
+            <td  style='font-size:0.1em'>{{ props.item.date }}</td>
+        </template>
+        </v-data-table>
+    </dash-container>
     </div>
     </v-card>
     `,
@@ -174,6 +179,7 @@ Vue.component(
             },
             setLayout: function(sizer){
                 Vue.nextTick(()=>{
+                    this.$refs.table.resize();
                     this.$refs.title.resize();
                 })
             }
@@ -210,8 +216,12 @@ Vue.component(
                                 value: 'https://picsum.photos/1270/720/?random' + Math.floor((Math.random() * 10000) + 1)
                             },
                         ]
-                    }
-
+                    },
+                    timer: {
+                        type: 'dash-form-slide',
+                        name: 'Tempo de troca de imagem',
+                        size: "5",
+                    },
                 }
             }
         },
@@ -224,7 +234,7 @@ Vue.component(
         template: `
         <v-card style='min-height:200px'>
         <slot name='edit'></slot>
-            <v-carousel style='height:100%'>
+            <v-carousel style='height:100%' :interval='data.timer.size*1000'>
                 <v-carousel-item v-for="i in data.carrosel.size" :key="i" :src="data.carrosel.items[i-1].value" ref='carr'></v-carousel-item>
             </v-carousel>
         </v-card>
@@ -452,7 +462,7 @@ Vue.component(
                     },
                     title: {
                         type: 'dash-form-text',
-                        name: 'Título',
+                        name: 'Titulo',
                         size: "6",
                         color: "white",
                         align: 'center',
@@ -479,7 +489,7 @@ Vue.component(
                     json: {
                         type: 'dash-form-json',
                         name: "Dados JSON",
-                        value: "json/notice_example1",
+                        value: "",
                         data: {
                             "title": "",
                             "pretext": "",
@@ -503,8 +513,9 @@ Vue.component(
             "data.json.data": function () {
 
                 if (this.data.json.data != null) {
-                    this.data.title.value = this.data.json.data.title;
-                    this.data.text.value = this.data.json.data.pretext;
+
+                    if (this.data.json.data.title != null)this.data.title.value = this.data.json.data.title;
+                    if (this.data.json.data.pretext != null)this.data.text.value = this.data.json.data.pretext;
                     if (this.data.json.data.image != null) this.data.background.value = this.data.json.data.image;
                 }
             }
@@ -543,7 +554,6 @@ Vue.component(
                         dataType: "JSON",
                         method: 'GET',
                     }).done(response => {
-
                         this.data.json.data = response;
                         this.setLayout(this.father.getSizerType());
                     })

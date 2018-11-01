@@ -12,7 +12,7 @@
 -->
 
 
-<div style='position:absolute;width:100%;' class='ml-1 font-weight-bold text-xs-center' >ID # @{{connection_id}}</div>
+<div style='position:absolute;width:100%;' class='ml-1 font-weight-bold text-xs-center'>ID # @{{connection_id}}</div>
 <div style='height:100%' v-show='connection & startconnection'>
     <template v-for='i in dashs'>
         <v-container fluid fill-height grid-list-md v-show='i == page'>
@@ -42,8 +42,7 @@
                                 <p class='text-xs-center display-4 white--text' style='text-shadow: 1px 1px grey'>#@{{connection_id}}</p>
                                 <p class='text-xs-center display-3 white--text'>
                                     <v-btn outline color="white" dark width='100px' style='width:350px;height:70px;font-size:20pt;text-shadow: 1px 1px grey;shadow: 1px 1px grey'
-                                        v-on:click='model_connect=true'>EDITAR
-                                        DASH</v-btn>
+                                        v-on:click='model_connect=true'>INICIAR</v-btn>
                                 </p>
                             </v-flex>
                         </v-layout>
@@ -232,6 +231,19 @@
 
                         </v-expansion-panel-content>
 
+                        <v-expansion-panel-content>
+                            <div slot="header">Sincronizar com outra dash</div>
+                            <v-container grid-list-xs>
+                                <v-layout row wrap>
+                                    <v-flex xs12>
+                                        <v-text-field label="DASH ID" v-model="configs.settings.sync" prefix="#"></v-text-field>
+                                    </v-flex>
+                                </v-layout>
+
+                            </v-container>
+
+                        </v-expansion-panel-content>
+
                 </v-flex>
             </v-layout>
         </v-container>
@@ -257,8 +269,11 @@
                     <v-text-field placeholder="DASHBOARD ID " prefix='#' v-model='model_id_connection' maxlength='5'
                         counter='5'></v-text-field>
                 </v-flex>
-                <v-flex xs12>
-                    <v-btn outline color="green" dark block v-on:click='connect_dash()'>Editar</v-btn>
+                <v-flex xs12 md6>
+                    <v-btn outline color="blue" dark block v-on:click='view_dash()'>Visualizar</v-btn>
+                </v-flex>
+                <v-flex xs12 md6>
+                    <v-btn outline color="orange" dark block v-on:click='connect_dash()'>Editar</v-btn>
                 </v-flex>
             </v-layout>
 
@@ -269,7 +284,7 @@
     NAVIGATION DASHS
 -->
 
-<v-speed-dial v-model="model_float_menu" bottom left fixed v-show='connection' v-if='is_editor & startconnection'>
+<v-speed-dial v-model="model_float_menu" bottom left fixed v-if='is_editor & startconnection'>
     <v-btn slot="activator" fab dark color="secondary">
         <v-icon>dashboard</v-icon>
         <v-icon>close</v-icon>
@@ -309,8 +324,7 @@
                         Mover para esquerda
                     </v-btn>
                 </v-flex>
-                <v-flex xs12 md6
-                >
+                <v-flex xs12 md6>
 
                     <v-btn block color="orange" dark @click='changeOrder("RIGHT")'>
                         Mover para direita
@@ -451,6 +465,7 @@ Vue
                         page: 1,
                         preview: false,
                         preview_time: 10,
+                        sync: null
                     },
                     data_card: {}
                 },
@@ -467,6 +482,7 @@ Vue
                     text: ""
                 },
                 preview: true,
+                block_init_settings: false,
                 page: 1,
                 is_editor: false,
                 refresh_rate: 3000,
@@ -489,6 +505,10 @@ Vue
                 if ("{{$connection}}" == "true" || this.connection2) return true;
                 return false;
             },
+            preview2: function () {
+                if (this.is_editor) return this.preview;
+                else return true;
+            }
         },
         watch: {
             model_edit_card_show: function () {
@@ -586,14 +606,20 @@ Vue
                     i = 2;
                     if (response.hasOwnProperty('settings')) {
                         __this.configs.settings = response.settings;
-
-                        __this.preview = response.settings.preview == "true" ? true : false;
+                        if (__this.configs.settings.sync != null & !__this.is_editor) {
+                            __this.connection_id = __this.configs.settings.sync
+                            return;
+                        }
+                        if (!__this.block_init_settings) __this.preview = response.settings.preview ==
+                            "true" ? true : false;
                     }
-                    if (!__this.preview && !__this.is_editor) __this.page = parseInt(__this.configs
-                        .settings.page, 10);
+                    if (!__this.preview && !__this.is_editor & !__this.block_init_settings) __this.page =
+                        parseInt(__this.configs
+                            .settings.page, 10);
 
                     __this.dashs = parseInt(response.number_dashs);
                     //if (__this.dashs > i - 1) __this.dashs = i - 1;
+                    __this.block_init_settings = false;
                     Vue.nextTick(function () {
                         for (i = 1; i < __this.dashs; i++) {
                             if (response.hasOwnProperty('dash' + i)) {
@@ -611,6 +637,7 @@ Vue
                     this.page++;
                     if (this.page > this.dashs) this.page = 1;
                     __this = this;
+                    clearTimeout(this.timeout_show);
                     this.timeout_show = setTimeout(function () {
                         __this.running()
                     }, __this.configs.settings.preview_time * 1000);
@@ -641,12 +668,16 @@ Vue
                         }
                     });
                 } else {
-
-                    this.is_editor = true;
-                    this.preview = false;
-                    if (this.startconnection) {
-                        this.refreshDash();
-                        this.startConnection();
+                    if (window.location.href.indexOf("&show") > -1) {
+                        this.model_id_connection = this.connection_id
+                        this.view_dash();
+                    } else if (!this.connection2) {
+                        this.is_editor = true;
+                        this.preview = false;
+                        if (this.startconnection) {
+                            this.refreshDash();
+                            this.startConnection();
+                        }
                     }
                 }
 
@@ -678,6 +709,22 @@ Vue
             notify: function (message) {
                 this.notification.model = true;
                 this.notification.message = message;
+            },
+            view_dash() {
+                if (this.model_id_connection.length == 5) {
+                    this.block_init_settings = true;
+                    this.preview = true;
+                    this.page = 1;
+                    this.connection_id = this.model_id_connection;
+                    this.connection2 = true;
+                    this.startconnection = true;
+                    this.model_connect = false;
+                    this.is_editor = false;
+                    setTimeout(() => {
+                        this.running();
+                        this.refreshDash();
+                    }, 1000);
+                }
             },
             connect_dash() {
                 if (this.model_id_connection.length == 5) window.location.href =
@@ -764,7 +811,7 @@ Vue
                             this.page--;
                             setTimeout(() => {
                                 this.save();
-                            },1000)
+                            }, 1000)
                         }
                         break;
                     case "RIGHT":
@@ -778,7 +825,7 @@ Vue
                             this.page++;
                             setTimeout(() => {
                                 this.save();
-                            },1000)
+                            }, 1000)
                         }
                         break;
                 }
@@ -790,6 +837,11 @@ Vue
             this.getMeta();
             this.model_id_connection = this.connection_id;
 
+            $(document).keydown((event) =>{
+                if (event.which == 27) {
+                    this.preview = !this.preview;
+                }
+            });
 
         }
     });

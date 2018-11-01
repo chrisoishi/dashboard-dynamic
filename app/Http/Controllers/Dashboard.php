@@ -89,16 +89,27 @@ class Dashboard extends Controller
         else return "{}";
     }
     function start(Request $r){
-        Storage::put("cfgs/start/$r->connection.txt",$r->dash_id);
+        if(Storage::exists("cfgs/start/$r->connection.txt")){
+            $data = Storage::get("cfgs/start/$r->connection.txt");
+            if($data=='wait')Storage::put("cfgs/start/$r->connection.txt",$r->dash_id);
+        }
     }
 
     function connection($id){
         if(Storage::exists("cfgs/start/$id.txt")){
             $dash = Storage::get("cfgs/start/$id.txt");
+            if($dash != "wait"){
             Storage::delete("cfgs/start/$id.txt");
             return json_encode(array('connection'=>$dash));
+            }
+            else return json_encode(array('connection'=>'false'));
+
         }
-        else return json_encode(array('connection'=>'false'));
+        else{
+            Storage::put("cfgs/start/$id321ewefgdffldorl;cldsa[werg,.dxz,.m;klpkjhhfglffferw3ecjmckdcdftywwwfuv,;8hvhjhjyfhjkljhuy6tdfza.txt","wait");
+            return json_encode(array('connection'=>'false'));
+        }
+
     }
     function json($json){
         return Storage::get("json/$json.txt");
