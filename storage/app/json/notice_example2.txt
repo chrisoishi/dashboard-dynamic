@@ -1,0 +1,7 @@
+{
+    "title": "Taís Araújo lança sua primeira coleção de batons com quem disse, berenice?",
+    "pretext": "Essa é a primeira parceria da Taís com uma marca de maquiagem e o resultado é uma coleção de seis batons que representam momentos especiais de sua vida",
+    "image": "https://conteudo.imguol.com.br/c/noticias/2c/2018/10/15/atriz-tais-araujo-e-o-rosto-da-marca-quem-disse-berenice-desde-junho-deste-ano-1539615007065_v2_900x506.jpg",
+    "notice_url": "https://exame.abril.com.br/marketing/tais-araujo-lanca-sua-primeira-colecao-de-batons-com-quem-disse-berenice/"
+}
+

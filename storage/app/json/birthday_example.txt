@@ -1,0 +1,21 @@
+[{
+    "src": "images/avatar.jpg",
+    "name": "Gato",
+    "date": 25
+},
+{
+    "src": "images/avatar_cachorro.jpg",
+    "name": "Cachorro",
+    "date": 10
+},
+{
+    "src": "images/avatar_peixe.jpg",
+    "name": "Peixe",
+    "date": 15
+},
+{
+    "src": "images/avatar_urso.jpg",
+    "name": "Urso",
+    "date": 22
+}]
+

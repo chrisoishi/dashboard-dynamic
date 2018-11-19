@@ -1,0 +1,1 @@
+{"question":"Pergunta???","answers":[{"value":"Gostei"},{"value":"N\u00e3o gostei"},{"value":"Pode melhorar"},{"value":"Talvez sim talvez n\u00e3o"},{"value":"bom dia"},{"value":"e compania"}],"4":1,"2":2,"0":1,"5":1,"1":1}

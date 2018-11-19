@@ -1,0 +1,87 @@
+{
+    "settings": {
+        "page": "1",
+        "preview": "false",
+        "preview_time": "10",
+        "sync": null
+    },
+    "dash1": {
+        "type": "dash-layout-1x2",
+        "id": "49129",
+        "data": {
+            "card1": {
+                "type": "dash-card-carrosel",
+                "id": "62399",
+                "data": {
+                    "carrosel": {
+                        "name": "Lista de imagens",
+                        "type": "dash-form-string-array",
+                        "size": "3",
+                        "size_max": "10",
+                        "items": [
+                            {
+                                "value": "https:\/\/picsum.photos\/1270\/720\/?random3204"
+                            },
+                            {
+                                "value": "https:\/\/picsum.photos\/1270\/720\/?random2514"
+                            },
+                            {
+                                "value": "https:\/\/picsum.photos\/1270\/720\/?random8952"
+                            }
+                        ]
+                    }
+                }
+            },
+            "card2": {
+                "type": "dash-card-feed",
+                "id": "43728",
+                "data": {
+                    "background": {
+                        "type": "dash-form-background",
+                        "name": "Imagem de fundo",
+                        "color": "black",
+                        "opacity": "70",
+                        "value": "https:\/\/picsum.photos\/1270\/720\/?random"
+                    },
+                    "title": {
+                        "type": "dash-form-text",
+                        "name": "Titulo",
+                        "size": "6",
+                        "color": "white",
+                        "align": "center",
+                        "value": "T\u00edtulo",
+                        "font": "bold"
+                    },
+                    "text": {
+                        "type": "dash-form-textarea",
+                        "name": "Texto",
+                        "size": "4",
+                        "color": "white",
+                        "align": "justify",
+                        "value": "Texto",
+                        "font": "regular"
+                    },
+                    "qr_size": {
+                        "type": "dash-form-slide",
+                        "name": "Tamanho do QR CODE",
+                        "size": "80",
+                        "size_max": "150"
+                    },
+                    "json": {
+                        "type": "dash-form-json",
+                        "name": "Dados JSON",
+                        "value": null,
+                        "data": {
+                            "title": null,
+                            "pretext": null,
+                            "image": null,
+                            "notice_url": "oi"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "updated_level": "3",
+    "number_dashs": "1"
+}

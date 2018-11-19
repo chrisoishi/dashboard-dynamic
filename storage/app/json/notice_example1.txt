@@ -1,0 +1,7 @@
+{
+    "title": "Hoje é um dia de sol",
+    "pretext": "Vai fazer muito calor hoje, porque eh um dia de sol",
+    "image": "images/beach.jpg",
+    "notice_url": "http://g1.globo.com/ro/ariquemes-e-vale-do-jamari/noticia/2016/04/vale-do-jamari-deve-ter-dia-de-sol-neste-domingo-24-diz-inpe.html"
+}
+

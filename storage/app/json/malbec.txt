@@ -1,0 +1,7 @@
+{
+    "title": "MALBEC SIGNATURE",
+    "pretext": "Da combinação exclusiva da essência de Malbec com a madeira OUD, nasce o primeiro eau de parfum da linha Malbec",
+    "image": "images/boticario/malbec.png",
+    "notice_url": "https://www.boticario.com.br/malbec-signature-eau-de-parfum/p"
+}
+

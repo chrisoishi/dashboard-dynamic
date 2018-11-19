@@ -1,0 +1,473 @@
+{
+    "settings": {
+        "page": "1",
+        "preview": "false",
+        "preview_time": "10",
+        "sync": null
+    },
+    "data_card": {
+        "id_22578": {
+            "question": "O que achou do mural?",
+            "answers": [
+                {
+                    "value": "Gostei"
+                },
+                {
+                    "value": "Nao Gostei"
+                },
+                {
+                    "value": "Sei la"
+                }
+            ]
+        },
+        "id_102838": {
+            "question": "Pergunta???",
+            "answers": [
+                {
+                    "value": "Sim"
+                },
+                {
+                    "value": "Nao"
+                }
+            ]
+        }
+    },
+    "dash1": {
+        "type": "dash-card-carrosel",
+        "id": "82547",
+        "data": {
+            "carrosel": {
+                "name": "Lista de imagens",
+                "type": "dash-form-string-array",
+                "size": "2",
+                "size_max": "10",
+                "items": [
+                    {
+                        "value": "images\/banners\/banner-shift.png"
+                    },
+                    {
+                        "value": "images\/banners\/banner-more.png"
+                    }
+                ]
+            },
+            "timer": {
+                "type": "dash-form-slide",
+                "name": "Tempo de troca de imagem",
+                "size": "5"
+            }
+        }
+    },
+    "dash2": {
+        "type": "dash-layout-1x2",
+        "id": "36865",
+        "data": {
+            "card1": {
+                "type": "dash-layout-2x1",
+                "id": "48304",
+                "data": {
+                    "card1": {
+                        "type": "dash-card-image",
+                        "id": "77807",
+                        "data": {
+                            "background": {
+                                "type": "dash-form-background",
+                                "name": "Imagem de fundo",
+                                "color": "black",
+                                "opacity": "0",
+                                "value": "images\/boticario\/qdb.jpg"
+                            },
+                            "title": {
+                                "type": "dash-form-text",
+                                "name": "T\u00edtulo",
+                                "size": "16.5",
+                                "color": "black",
+                                "align": "left",
+                                "value": null,
+                                "font": "bold"
+                            },
+                            "text": {
+                                "type": "dash-form-textarea",
+                                "name": "Texto",
+                                "size": "12.1",
+                                "color": "#FFFFFF",
+                                "align": "left",
+                                "value": null,
+                                "font": "regular"
+                            }
+                        }
+                    },
+                    "card2": {
+                        "type": "dash-card-video",
+                        "id": "30851",
+                        "data": {
+                            "src": {
+                                "type": "dash-form-string",
+                                "name": "URL video Youtube",
+                                "color": "white",
+                                "value": "https:\/\/youtu.be\/R5cN_ImZ6tE"
+                            }
+                        }
+                    }
+                }
+            },
+            "card2": {
+                "type": "dash-card-feed",
+                "id": "89961",
+                "data": {
+                    "background": {
+                        "type": "dash-form-background",
+                        "name": "Imagem de fundo",
+                        "color": "#000000",
+                        "opacity": "56",
+                        "value": "https:\/\/conteudo.imguol.com.br\/c\/noticias\/2c\/2018\/10\/15\/atriz-tais-araujo-e-o-rosto-da-marca-quem-disse-berenice-desde-junho-deste-ano-1539615007065_v2_900x506.jpg"
+                    },
+                    "title": {
+                        "type": "dash-form-text",
+                        "name": "T\u00edtulo",
+                        "size": "5",
+                        "color": "white",
+                        "align": "center",
+                        "value": "Ta\u00eds Ara\u00fajo lan\u00e7a sua primeira cole\u00e7\u00e3o de batons com quem disse, berenice?",
+                        "font": "bold"
+                    },
+                    "text": {
+                        "type": "dash-form-textarea",
+                        "name": "Texto",
+                        "size": "3.9",
+                        "color": "white",
+                        "align": "justify",
+                        "value": "Essa \u00e9 a primeira parceria da Ta\u00eds com uma marca de maquiagem e o resultado \u00e9 uma cole\u00e7\u00e3o de seis batons que representam momentos especiais de sua vida",
+                        "font": "regular"
+                    },
+                    "qr_size": {
+                        "type": "dash-form-slide",
+                        "name": "Tamanho do QR CODE",
+                        "size": "80",
+                        "size_max": "150"
+                    },
+                    "json": {
+                        "type": "dash-form-json",
+                        "name": "Dados JSON",
+                        "value": "json\/notice_example2",
+                        "data": {
+                            "title": "Ta\u00eds Ara\u00fajo lan\u00e7a sua primeira cole\u00e7\u00e3o de batons com quem disse, berenice?",
+                            "pretext": "Essa \u00e9 a primeira parceria da Ta\u00eds com uma marca de maquiagem e o resultado \u00e9 uma cole\u00e7\u00e3o de seis batons que representam momentos especiais de sua vida",
+                            "image": "https:\/\/conteudo.imguol.com.br\/c\/noticias\/2c\/2018\/10\/15\/atriz-tais-araujo-e-o-rosto-da-marca-quem-disse-berenice-desde-junho-deste-ano-1539615007065_v2_900x506.jpg",
+                            "notice_url": "https:\/\/exame.abril.com.br\/marketing\/tais-araujo-lanca-sua-primeira-colecao-de-batons-com-quem-disse-berenice\/"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "dash3": {
+        "type": "dash-layout-1x2",
+        "id": "84190",
+        "data": {
+            "card1": {
+                "type": "dash-layout-2x1",
+                "id": "99167",
+                "data": {
+                    "card1": {
+                        "type": "dash-card-feed",
+                        "id": "84186",
+                        "data": {
+                            "background": {
+                                "type": "dash-form-background",
+                                "name": "Imagem de fundo",
+                                "color": "black",
+                                "opacity": "70",
+                                "value": "images\/boticario\/malbec.png"
+                            },
+                            "title": {
+                                "type": "dash-form-text",
+                                "name": "T\u00edtulo",
+                                "size": "8.1",
+                                "color": "#ffffff",
+                                "align": "center",
+                                "value": "MALBEC SIGNATURE",
+                                "font": "bold"
+                            },
+                            "text": {
+                                "type": "dash-form-textarea",
+                                "name": "Texto",
+                                "size": "5",
+                                "color": "white",
+                                "align": "justify",
+                                "value": "Da combina\u00e7\u00e3o exclusiva da ess\u00eancia de Malbec com a madeira OUD, nasce o primeiro eau de parfum da linha Malbec",
+                                "font": "regular"
+                            },
+                            "qr_size": {
+                                "type": "dash-form-slide",
+                                "name": "Tamanho do QR CODE",
+                                "size": "80",
+                                "size_max": "150"
+                            },
+                            "json": {
+                                "type": "dash-form-json",
+                                "name": "Dados JSON",
+                                "value": "json\/malbec",
+                                "data": {
+                                    "title": "MALBEC SIGNATURE",
+                                    "pretext": "Da combina\u00e7\u00e3o exclusiva da ess\u00eancia de Malbec com a madeira OUD, nasce o primeiro eau de parfum da linha Malbec",
+                                    "image": "images\/boticario\/malbec.png",
+                                    "notice_url": "https:\/\/www.boticario.com.br\/malbec-signature-eau-de-parfum\/p"
+                                }
+                            }
+                        }
+                    },
+                    "card2": {
+                        "type": "dash-card-video",
+                        "id": "88482",
+                        "data": {
+                            "src": {
+                                "type": "dash-form-string",
+                                "name": "URL video Youtube",
+                                "color": "white",
+                                "value": "https:\/\/youtu.be\/uIaS0Uoy6xI"
+                            }
+                        }
+                    }
+                }
+            },
+            "card2": {
+                "type": "dash-card-carrosel",
+                "id": "38800",
+                "data": {
+                    "carrosel": {
+                        "name": "Lista de imagens",
+                        "type": "dash-form-string-array",
+                        "size": "3",
+                        "size_max": "10",
+                        "items": [
+                            {
+                                "value": "https:\/\/boticario.vteximg.com.br\/arquivos\/ids\/194313-500-500\/Malbec_Eau_de_Parfum_Signature_90ml_71040_2.jpg?v=636669007589870000"
+                            },
+                            {
+                                "value": "https:\/\/boticario.vteximg.com.br\/arquivos\/ids\/194316-500-500\/Malbec_Eau_de_Parfum_Signature_90ml_71040_5.jpg?v=636669008585870000"
+                            },
+                            {
+                                "value": "https:\/\/boticario.vteximg.com.br\/arquivos\/ids\/194315-500-500\/Malbec_Eau_de_Parfum_Signature_90ml_71040_4.jpg?v=636669008444170000"
+                            }
+                        ]
+                    },
+                    "timer": {
+                        "type": "dash-form-slide",
+                        "name": "Tempo de troca de imagem",
+                        "size": "11"
+                    }
+                }
+            }
+        }
+    },
+    "dash4": {
+        "type": "dash-layout-2x1",
+        "id": "86611",
+        "data": {
+            "card1": {
+                "type": "dash-layout-1x2",
+                "id": "32882",
+                "data": {
+                    "card1": {
+                        "type": "dash-card-birthday",
+                        "id": "11578",
+                        "data": {
+                            "background": {
+                                "type": "dash-form-background",
+                                "name": "Imagem de fundo",
+                                "color": "#4c1130",
+                                "opacity": "53",
+                                "value": "images\/birthday.jpg"
+                            },
+                            "title": {
+                                "type": "dash-form-text",
+                                "name": "T\u00edtulo",
+                                "size": "6",
+                                "color": "white",
+                                "value": "Aniversariantes do m\u00eas",
+                                "align": "center",
+                                "size_max": "30",
+                                "font": "bold"
+                            },
+                            "json": {
+                                "type": "dash-form-json",
+                                "name": "Aniversariantes",
+                                "value": "json\/birthday_example",
+                                "data": [
+                                    {
+                                        "src": "images\/avatar.jpg",
+                                        "name": "Gato",
+                                        "date": "25"
+                                    },
+                                    {
+                                        "src": "images\/avatar_cachorro.jpg",
+                                        "name": "Cachorro",
+                                        "date": "10"
+                                    },
+                                    {
+                                        "src": "images\/avatar_peixe.jpg",
+                                        "name": "Peixe",
+                                        "date": "15"
+                                    },
+                                    {
+                                        "src": "images\/avatar_urso.jpg",
+                                        "name": "Urso",
+                                        "date": "22"
+                                    }
+                                ]
+                            },
+                            "list_size": {
+                                "type": "dash-form-slide",
+                                "name": "Tamanho da lista",
+                                "size": "12.9",
+                                "step": "0.1"
+                            },
+                            "toolbar_color": {
+                                "type": "dash-form-color",
+                                "name": "Cor da barra do topo",
+                                "value": "#741b47"
+                            }
+                        }
+                    },
+                    "card2": {
+                        "type": "dash-card-image",
+                        "id": "79021",
+                        "data": {
+                            "background": {
+                                "type": "dash-form-background",
+                                "name": "Imagem de fundo",
+                                "color": "black",
+                                "opacity": "0",
+                                "value": "images\/banners\/tsystems.jpg"
+                            },
+                            "title": {
+                                "type": "dash-form-text",
+                                "name": "T\u00edtulo",
+                                "size": "2",
+                                "color": "black",
+                                "align": "left",
+                                "value": null,
+                                "font": "bold"
+                            },
+                            "text": {
+                                "type": "dash-form-textarea",
+                                "name": "Texto",
+                                "size": "1",
+                                "color": "#FFFFFF",
+                                "align": "left",
+                                "value": null,
+                                "font": "regular"
+                            }
+                        }
+                    }
+                }
+            },
+            "card2": {
+                "type": "dash-card-survey",
+                "id": "22578",
+                "data": {
+                    "background": {
+                        "type": "dash-form-background",
+                        "name": "Imagem de fundo",
+                        "color": "#000000",
+                        "opacity": "57",
+                        "value": "images\/boticario\/boticario.jpg"
+                    },
+                    "title": {
+                        "type": "dash-form-text",
+                        "name": "Pergunta",
+                        "size": "10.3",
+                        "color": "#ffffff",
+                        "align": "center",
+                        "value": "O que achou do mural?"
+                    },
+                    "qr_size": {
+                        "type": "dash-form-slide",
+                        "name": "Tamanho do QR CODE",
+                        "size": "83",
+                        "size_max": "100"
+                    },
+                    "options": {
+                        "type": "dash-form-string-array",
+                        "name": "Respostas",
+                        "size": "3",
+                        "size_max": "6",
+                        "items": [
+                            {
+                                "value": "Gostei"
+                            },
+                            {
+                                "value": "Nao Gostei"
+                            },
+                            {
+                                "value": "Sei la"
+                            }
+                        ]
+                    },
+                    "options_size": {
+                        "type": "dash-form-slide",
+                        "name": "Tamanho das respostas",
+                        "size": "3.7",
+                        "step": "0.1"
+                    }
+                }
+            }
+        }
+    },
+    "dash5": {
+        "type": "dash-layout-1x2",
+        "id": "30319",
+        "data": {
+            "card1": null,
+            "card2": {
+                "type": "dash-card-survey",
+                "id": "102838",
+                "data": {
+                    "background": {
+                        "type": "dash-form-background",
+                        "name": "Imagem de fundo",
+                        "color": "#ffffff",
+                        "opacity": "34",
+                        "value": "https:\/\/picsum.photos\/1270\/720\/?random33"
+                    },
+                    "title": {
+                        "type": "dash-form-text",
+                        "name": "Pergunta",
+                        "size": "10",
+                        "color": "#000000",
+                        "align": "center",
+                        "value": "Pergunta???"
+                    },
+                    "qr_size": {
+                        "type": "dash-form-slide",
+                        "name": "Tamanho do QR CODE",
+                        "size": "100",
+                        "size_max": "100"
+                    },
+                    "options": {
+                        "type": "dash-form-string-array",
+                        "name": "Respostas",
+                        "size": "2",
+                        "size_max": "6",
+                        "items": [
+                            {
+                                "value": "Sim"
+                            },
+                            {
+                                "value": "Nao"
+                            }
+                        ]
+                    },
+                    "options_size": {
+                        "type": "dash-form-slide",
+                        "name": "Tamanho das respostas",
+                        "size": "6.1",
+                        "step": "0.1"
+                    }
+                }
+            }
+        }
+    },
+    "updated_level": "64",
+    "number_dashs": "5"
+}

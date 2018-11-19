@@ -1,0 +1,1 @@
+{"question":"O que achou do mural?","answers":[{"value":"Gostei"},{"value":"Nao Gostei"},{"value":"Sei la"}],"0":5,"1":2,"2":2}
