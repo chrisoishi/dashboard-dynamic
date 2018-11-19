@@ -377,11 +377,9 @@ Vue
 <script src="{{asset('app/vue-dash-components.js')}}"></script>
 <script src="{{asset('app/plugins/swatches/vue-swatches.min.js')}}"></script>
 <script src="{{asset('app/plugins/video-youtube/iframe_api.js')}}"></script>
-<script src="{{asset('app/plugins/vue-resize/vue-resize.min.js')}}"></script>
 <script>
     $.url = location.href.split('?')[0];
     Vue.component('swatches', window.VueSwatches.default);
-    Vue.component('resize-observer', ResizeObserver)
     //$('.dash-text').flowtype();
 
 

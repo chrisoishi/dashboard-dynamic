@@ -106,7 +106,7 @@ class Dashboard extends Controller
 
         }
         else{
-            Storage::put("cfgs/start/$id321ewefgdffldorl;cldsa[werg,.dxz,.m;klpkjhhfglffferw3ecjmckdcdftywwwfuv,;8hvhjhjyfhjkljhuy6tdfza.txt","wait");
+            Storage::put("cfgs/start/$id.txt","wait");
             return json_encode(array('connection'=>'false'));
         }
 
