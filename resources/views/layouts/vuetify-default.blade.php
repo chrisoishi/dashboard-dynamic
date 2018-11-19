@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  style='overflow:hidden'>
+<html >
 
 <head>
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
@@ -27,7 +27,7 @@
     <script src="{{asset('vuetify/vue.min.js')}}"></script>
     <script src="{{asset('vuetify/vuetify.min.js')}}"></script>
     @yield("js")
-</bod>
+</body>
 
 </html>
 

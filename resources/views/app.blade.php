@@ -356,9 +356,6 @@
         </v-scale-transition>
     </v-flex>
 </v-layout>
-<div class="text-xs-center">
-
-</div>
 
 @endsection
 
