@@ -2,10 +2,6 @@
 
 @section('vuetify-app-content')
 
-<v-navigation-drawer v-model="lmenu" fixed app temporary>
-    @yield('l-menu')
-</v-navigation-drawer>
-
 
 <v-content>
     @yield('l-content')

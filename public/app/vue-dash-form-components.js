@@ -4,8 +4,8 @@ Vue.component(
             value: Object,
             name: String,
         },
-        computed:{
-            readonly2: function(){
+        computed: {
+            readonly2: function () {
                 return this.value.hasOwnProperty('readonly');
             }
         },
@@ -25,17 +25,19 @@ Vue.component(
             name: String,
 
         },
-        data(){
-            return {id: Math.random()}
+        data() {
+            return {
+                id: Math.random()
+            }
         },
-        computed:{
-            max2: function(){
-                if(this.value.hasOwnProperty('size_max')) return this.value.size_max;
+        computed: {
+            max2: function () {
+                if (this.value.hasOwnProperty('size_max')) return this.value.size_max;
                 else return 200;
             },
         },
-        watch:{
-            "value.size": function(){
+        watch: {
+            "value.size": function () {
                 this.checkSize(false);
             },
 
@@ -58,17 +60,19 @@ Vue.component(
                 }
                 this.$emit('input', this.value);
             },
-            checkSize: function(){
-                if(!this.value.hasOwnProperty('items'))this.value.items = [];
-                while(this.value.items.length < this.value.size){
-                    this.value.items.push({value:""});
+            checkSize: function () {
+                if (!this.value.hasOwnProperty('items')) this.value.items = [];
+                while (this.value.items.length < this.value.size) {
+                    this.value.items.push({
+                        value: ""
+                    });
                 }
-                while(this.value.items.length > this.value.size){
+                while (this.value.items.length > this.value.size) {
                     this.value.items.pop();
                 }
             }
         },
-        created(){
+        created() {
             this.value.size = parseInt(this.value.size);
             this.checkSize();
         }
@@ -104,7 +108,7 @@ Vue.component(
         },
         template: `<v-layout row wrap>
         <v-flex xs12>
-        <swatches :label="name" :value="value.value" v-on:input="change($event)" colors="text-advanced" popover-to="right" shapes="circles" show-fallback class='extra-swatches-trigger-border'></swatches>
+        <swatches :label="name" :value="value.value" v-on:input="change($event)" colors="text-advanced" popover-to="right" shapes="circles" show-fallback class='extra-swatches-trigger-border' max-height='150'></swatches>
         </v-flex>
         </v-layout>`,
         methods: {
@@ -121,16 +125,21 @@ Vue.component(
             value: Object,
             name: String,
         },
-        computed:{
-            max2: function(){
-                if(this.value.hasOwnProperty('size_max')) return this.value.size_max;
+        data() {
+            return {
+                layout_bottom: false
+            }
+        },
+        computed: {
+            max2: function () {
+                if (this.value.hasOwnProperty('size_max')) return this.value.size_max;
                 else return 30;
             },
-            align: function(){
-                if(this.value.align=='left')return 0;
-                if(this.value.align=='center')return 1;
-                if(this.value.align=='right')return 2;
-                if(this.value.align=='justify')return 3;
+            align: function () {
+                if (this.value.align == 'left') return 0;
+                if (this.value.align == 'center') return 1;
+                if (this.value.align == 'right') return 2;
+                if (this.value.align == 'justify') return 3;
             }
         },
         template: `<v-layout row wrap>
@@ -139,7 +148,7 @@ Vue.component(
         </v-flex>
 
         <v-flex xs6>
-        <swatches :value='value.color' v-on:input="change($event,'color')" colors="text-advanced" popover-to="right" shapes="circles" show-fallback class='extra-swatches-trigger-border'></swatches>
+        <swatches :value='value.color' v-on:input="change($event,'color')" colors="text-advanced" popover-to="right" shapes="circles" show-fallback class='extra-swatches-trigger-border' max-height='150'></swatches>
         </v-flex>
 
         <v-flex xs6>
@@ -179,16 +188,16 @@ Vue.component(
             value: Object,
             name: String,
         },
-        computed:{
-            max2: function(){
-                if(this.value.hasOwnProperty('size_max')) return this.value.size_max;
+        computed: {
+            max2: function () {
+                if (this.value.hasOwnProperty('size_max')) return this.value.size_max;
                 else return 30;
             },
-            align: function(){
-                if(this.value.align=='left')return 0;
-                if(this.value.align=='center')return 1;
-                if(this.value.align=='right')return 2;
-                if(this.value.align=='justify')return 3;
+            align: function () {
+                if (this.value.align == 'left') return 0;
+                if (this.value.align == 'center') return 1;
+                if (this.value.align == 'right') return 2;
+                if (this.value.align == 'justify') return 3;
             }
         },
         template: `<v-layout row wrap>
@@ -198,7 +207,7 @@ Vue.component(
         </v-flex>
 
         <v-flex xs6>
-        <swatches :value='value.color' v-on:input="change($event,'color')" colors="text-advanced" popover-to="right" shapes="circles" show-fallback class='extra-swatches-trigger-border'></swatches>
+        <swatches :value='value.color' v-on:input="change($event,'color')" colors="text-advanced" popover-to="right" shapes="circles" show-fallback class='extra-swatches-trigger-border' max-height='150'></swatches>
         </v-flex>
         <v-flex xs6>
         <v-btn-toggle v-model="align">
@@ -238,13 +247,13 @@ Vue.component(
             value: Object,
             name: String,
         },
-        computed:{
-            max2: function(){
-                if(this.value.hasOwnProperty('size_max')) return this.value.size_max;
+        computed: {
+            max2: function () {
+                if (this.value.hasOwnProperty('size_max')) return this.value.size_max;
                 else return 30;
             },
-            step: function(){
-                if(this.value.hasOwnProperty('step')) return this.value.step;
+            step: function () {
+                if (this.value.hasOwnProperty('step')) return this.value.step;
                 else return 1;
             }
         },
@@ -269,15 +278,14 @@ Vue.component(
             value: Object,
             name: String,
         },
-        computed:{
-        },
+        computed: {},
         template: `<v-layout row wrap>
         <v-flex xs12>
             <v-text-field :placeholder="URL" :value='value.value' v-on:input="change($event,'value')"></v-text-field>
         </v-flex>
 
         <v-flex xs12>
-        <swatches :value='value.color' v-on:input="change($event,'color')" colors="text-advanced" popover-to="right" shapes="circles" show-fallback class='extra-swatches-trigger-border'></swatches>
+        <swatches :value='value.color' v-on:input="change($event,'color')" colors="text-advanced" popover-to="right" shapes="circles" show-fallback class='extra-swatches-trigger-border' max-height='150'></swatches>
         </v-flex>
 
         <v-flex xs12>

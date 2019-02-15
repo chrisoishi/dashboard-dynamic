@@ -1,9 +1,8 @@
+
+
 Vue.component(
     'dash-card-image', {
-        props: {
-            father: Object,
-
-        },
+        mixins:[struct_component],
         data: function () {
             return {
                 data: {
@@ -39,7 +38,7 @@ Vue.component(
         },
         computed: {},
         template: `
-        <v-card :style="'background-image: url('+data.background.value+');min-height:200px'"class="extra-background-cover">
+        <v-card :style="'background-image: url('+data.background.value+');min-height:200px'"class="extra-background-cover" >
         <slot name='edit'></slot>
         <div class='extra-background-card' :style="'background-color:'+data.background.color+';opacity:'+data.background.opacity/100"></div>
         <div style='position:absolute;width:100%;height:100%'>
@@ -72,10 +71,7 @@ Vue.component(
 
 Vue.component(
     'dash-card-birthday', {
-        props: {
-            father: Object,
-
-        },
+        mixins:[struct_component],
         data: function () {
             return {
                 data: {
@@ -177,7 +173,7 @@ Vue.component(
                     this.setLayout();
                 });
             },
-            setLayout: function(sizer){
+            setLayout(sizer){
                 Vue.nextTick(()=>{
                     this.$refs.table.resize();
                     this.$refs.title.resize();
@@ -195,9 +191,7 @@ Vue.component(
 
 Vue.component(
     'dash-card-carrosel', {
-        props: {
-            father: null,
-        },
+        mixins:[struct_component],
         data: function () {
             return {
                 data: {
@@ -234,7 +228,7 @@ Vue.component(
         template: `
         <v-card style='min-height:200px'>
         <slot name='edit'></slot>
-            <v-carousel style='height:100%' :interval='data.timer.size*1000'>
+            <v-carousel style='height:100%' :interval='data.timer.size*1000' >
                 <v-carousel-item v-for="i in data.carrosel.size" :key="i" :src="data.carrosel.items[i-1].value" ref='carr'></v-carousel-item>
             </v-carousel>
         </v-card>
@@ -246,10 +240,7 @@ Vue.component(
 
 Vue.component(
     'dash-card-survey', {
-        props: {
-            father: Object,
-
-        },
+        mixins:[struct_component],
         data: function () {
             return {
                 data: {
@@ -425,7 +416,6 @@ Vue.component(
                 Vue.nextTick(() => {
                     this.$refs.title.resize();
                     this.$refs.options.resize();
-                    //this.$refs.text.resize();
                 });
             },
             refresh() {
@@ -446,10 +436,7 @@ Vue.component(
 
 Vue.component(
     'dash-card-feed', {
-        props: {
-            father: Object,
-
-        },
+        mixins:[struct_component],
         data: function () {
             return {
                 data: {
@@ -528,7 +515,7 @@ Vue.component(
         <v-layout row wrap fill-height style='margin:0'>
             <v-flex d-flex xs12 :style="'height:'+layout.height1">
             <v-container fill-height style='padding:1%'>
-                <dash-text :data='data.title' ref='title'></dash-text>
+                <dash-text :data='data.title' ref='title' v-on:click="alert();father.edit_field(data.title)"></dash-text>
                 </v-container>
             </v-flex>
             <v-flex d-flex :style="'width:'+layout.width1+';height:'+layout.height2">
@@ -581,6 +568,9 @@ Vue.component(
                 })
 
             },
+            refresh(){
+                this.getNotice();
+            },
         },
         mounted() {
             this.getNotice();
@@ -593,10 +583,7 @@ Vue.component(
 var player = [];
 Vue.component(
     'dash-card-video', {
-        props: {
-            father: Object,
-
-        },
+        mixins:[struct_component],
         data: function () {
             return {
                 data: {
@@ -636,7 +623,7 @@ Vue.component(
         <div :id="'player-'+father.card_id" ></div>
         </template>
         <template v-else>
-        <v-container fill-height><div style='width:100%' class='font-weight-bold text-xs-center'>Insira a URL do vídeo do youtube</div></v-container>
+        <v-container fill-height><div style='width:100%' class='font-weight-bold text-xs-center'><v-btn color='red' dark v-on:click="app.dash_edit_card_field(data.src)">Inserir URL do Video Youtube</v-btn></v-container>
         </template>
         </v-card>
     `,
